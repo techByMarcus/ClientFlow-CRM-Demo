@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ClientFlow CRM Demo — Client Onboarding & Workflow Platform | Built by Marcus Albright</title>
+<title>LoanFlow CRM — Mortgage Pipeline Management | Built by Marcus Albright</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
@@ -543,13 +543,7 @@ function Dashboard({contacts, tasks, onView}) {
     <div>
       <div className="welcome-banner">
         <div className="welcome-left">
-      <h2>
-{new Date().getHours() < 12 
-  ? "Good morning" 
-  : new Date().getHours() < 18 
-  ? "Good afternoon" 
-  : "Good evening"}, Marcus 👋
-</h2>
+          <h2>Good morning, Marcus 👋</h2>
           <p>Your pipeline is active with <strong style={{color:'white'}}>{active.length} open loans</strong> totaling <strong style={{color:'white'}}>{fmt$(pipeline$)}</strong>. {stale > 0 ? <span style={{color:'#FCA5A5'}}>⚠️ {stale} deal{stale>1?'s':''} stale and need attention.</span> : <span style={{color:'#6EE7B7'}}>✓ No stale deals — pipeline healthy.</span>}</p>
           <div className="welcome-badges">
             <span className="welcome-badge">🏠 LoanFlow CRM</span>
