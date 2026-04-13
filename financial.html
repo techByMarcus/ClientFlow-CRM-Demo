@@ -4,53 +4,451 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Financial & Profit Analysis — ClientFlow Operations Suite</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'DM Sans',sans-serif;background:#F8FAFC;color:#1E293B;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
-  .container{text-align:center;max-width:520px}
-  .suite-badge{display:inline-flex;align-items:center;gap:6px;background:#0F1C2E;color:white;font-size:11px;font-weight:700;padding:5px 12px;border-radius:20px;margin-bottom:28px;letter-spacing:.5px}
-  .icon-wrap{width:80px;height:80px;border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 20px;background:#10B98118;border:2px solid #10B98140}
-  .accent-bar{width:60px;height:4px;background:#10B981;border-radius:2px;margin:0 auto 20px}
-  h1{font-size:26px;font-weight:700;color:#0F1C2E;letter-spacing:-.5px;margin-bottom:12px}
-  p{font-size:15px;color:#64748B;line-height:1.6;margin-bottom:28px}
-  .status-card{background:white;border:1px solid #E2E8F0;border-radius:16px;padding:24px 28px;margin-bottom:28px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 6px 20px rgba(0,0,0,.04)}
-  .status-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #F1F5F9;font-size:13px}
-  .status-row:last-child{border-bottom:none}
-  .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-  .dot-green{background:#10B981}
-  .dot-gray{background:#CBD5E1}
-  .status-label{font-weight:600;color:#334155;flex:1;text-align:left}
-  .status-val{color:#94A3B8;font-size:12px}
-  .back-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;background:#0F1C2E;color:white;border-radius:10px;text-decoration:none;font-size:14px;font-weight:600;transition:opacity .15s}
-  .back-btn:hover{opacity:.82}
+  :root{
+    --navy:#0F1C2E;--blue:#2563EB;--blue-light:#3B82F6;--blue-pale:#EFF6FF;
+    --teal:#0D9488;--teal-pale:#F0FDFA;--gold:#F59E0B;--gold-pale:#FFFBEB;
+    --red:#EF4444;--red-pale:#FEF2F2;--green:#10B981;--green-pale:#ECFDF5;
+    --purple:#7C3AED;--purple-pale:#F5F3FF;
+    --gray-50:#F8FAFC;--gray-100:#F1F5F9;--gray-200:#E2E8F0;--gray-300:#CBD5E1;
+    --gray-400:#94A3B8;--gray-500:#64748B;--gray-600:#475569;--gray-700:#334155;--gray-800:#1E293B;
+    --white:#FFFFFF;--font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+    --radius:10px;--radius-lg:16px;
+    --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06);
+    --shadow-md:0 4px 6px rgba(0,0,0,.07),0 10px 30px rgba(0,0,0,.1);
+  }
+  body{font-family:var(--font);background:var(--gray-50);color:var(--gray-800);min-height:100vh}
+  @keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+  .fade-up{animation:fadeInUp .35s ease both}
+  .fade-up-1{animation:fadeInUp .35s .05s ease both}
+  .fade-up-2{animation:fadeInUp .35s .10s ease both}
+  .fade-up-3{animation:fadeInUp .35s .15s ease both}
+  .fade-up-4{animation:fadeInUp .35s .20s ease both}
+  button{font-family:var(--font);cursor:pointer;border:none;outline:none}
+  ::-webkit-scrollbar{width:4px;height:4px}
+  ::-webkit-scrollbar-thumb{background:var(--gray-300);border-radius:2px}
+  .page{display:flex;flex-direction:column;min-height:100vh}
+
+  .topbar{background:var(--white);border-bottom:1px solid var(--gray-200);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 0 var(--gray-200)}
+  .topbar-left{display:flex;align-items:center;gap:14px}
+  .back-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:var(--gray-100);border-radius:8px;font-size:13px;font-weight:600;color:var(--gray-600);text-decoration:none;transition:all .15s}
+  .back-btn:hover{background:var(--gray-200);color:var(--gray-800)}
+  .topbar-title{font-size:16px;font-weight:700;color:var(--gray-800);letter-spacing:-.3px}
+  .topbar-sub{font-size:12px;color:var(--gray-400)}
+  .topbar-right{display:flex;align-items:center;gap:10px}
+  .status-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--green-pale);border:1px solid #A7F3D0;border-radius:20px;font-size:11px;font-weight:700;color:var(--green)}
+  .pulse-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+  .module-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--green-pale);border:1px solid #A7F3D0;border-radius:20px;font-size:11px;font-weight:700;color:var(--green)}
+
+  .content{flex:1;padding:24px 28px;max-width:1400px;width:100%;margin:0 auto}
+
+  .hero{background:linear-gradient(135deg,#0D1B2E 0%,#1A3A6B 45%,#0D5F57 100%);border-radius:var(--radius-lg);padding:22px 28px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 20px rgba(15,28,46,.25)}
+  .hero-left h1{font-size:20px;font-weight:700;color:white;margin-bottom:4px;letter-spacing:-.4px}
+  .hero-left p{font-size:13px;color:rgba(255,255,255,.6);max-width:480px;line-height:1.5}
+  .hero-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .hero-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;font-size:11px;font-weight:600;color:rgba(255,255,255,.85)}
+  .hero-right{text-align:right;flex-shrink:0;margin-left:24px}
+  .hero-stat{font-size:34px;font-weight:800;color:white;letter-spacing:-2px;line-height:1;font-family:var(--mono)}
+  .hero-stat-label{font-size:11px;color:rgba(255,255,255,.45);margin-top:4px;font-weight:500}
+
+  .kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:24px}
+  .kpi-card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--gray-200);padding:16px 18px;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s}
+  .kpi-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+  .kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+  .kpi-blue::before{background:var(--blue)}.kpi-red::before{background:var(--red)}
+  .kpi-green::before{background:var(--green)}.kpi-teal::before{background:var(--teal)}
+  .kpi-gold::before{background:var(--gold)}.kpi-purple::before{background:var(--purple)}
+  .kpi-icon{font-size:18px;margin-bottom:8px}
+  .kpi-label{font-size:10px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px}
+  .kpi-value{font-size:22px;font-weight:800;color:var(--gray-800);letter-spacing:-1px;line-height:1;font-family:var(--mono)}
+  .kpi-sub{font-size:11px;color:var(--gray-400);margin-top:4px}
+
+  .section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .section-title{font-size:15px;font-weight:700;color:var(--gray-800)}
+  .section-sub{font-size:12px;color:var(--gray-400);margin-top:2px}
+
+  .card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--gray-200);box-shadow:var(--shadow)}
+  .card-body{padding:20px}
+
+  .form-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
+  .form-group{display:flex;flex-direction:column;gap:5px}
+  .form-label{font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px}
+  .form-input,.form-select{padding:8px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;color:var(--gray-700);background:var(--white);font-family:var(--font);transition:border .15s}
+  .form-input:focus,.form-select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+  .form-actions{display:flex;gap:10px;padding-top:4px}
+
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;transition:all .15s;cursor:pointer;border:none}
+  .btn-primary{background:var(--blue);color:white}
+  .btn-primary:hover{background:var(--blue-light)}
+  .btn-ghost{background:transparent;color:var(--gray-600);border:1px solid var(--gray-200)}
+  .btn-ghost:hover{background:var(--gray-50)}
+  .btn-sm{padding:5px 11px;font-size:12px}
+  .btn-remove{padding:4px 9px;font-size:11px;background:var(--red-pale);color:var(--red);border-radius:6px;font-weight:600;cursor:pointer;border:none}
+
+  .filter-tabs{display:flex;gap:6px;flex-wrap:wrap}
+  .filter-btn{padding:5px 13px;border-radius:8px;font-size:12px;font-weight:600;background:var(--gray-100);color:var(--gray-500);border:none;transition:all .15s;cursor:pointer}
+  .filter-btn.active{background:var(--navy);color:white}
+  .filter-btn:hover:not(.active){background:var(--gray-200)}
+
+  .table-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse}
+  thead th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--gray-200);background:var(--gray-50);white-space:nowrap}
+  tbody td{padding:12px 14px;font-size:13px;border-bottom:1px solid var(--gray-100)}
+  tbody tr{transition:background .1s}
+  tbody tr:hover{background:var(--gray-50)}
+  tbody tr:last-child td{border-bottom:none}
+
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
+  .badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+  .badge-green{background:var(--green-pale);color:var(--green)}
+  .badge-teal{background:var(--teal-pale);color:var(--teal)}
+  .badge-gold{background:var(--gold-pale);color:var(--gold)}
+  .badge-red{background:var(--red-pale);color:var(--red)}
+  .badge-gray{background:var(--gray-100);color:var(--gray-500)}
+
+  .rep-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+  .rep-card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--gray-200);padding:18px;box-shadow:var(--shadow);transition:all .15s}
+  .rep-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+  .rep-top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .rep-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;flex-shrink:0}
+  .rep-name{font-size:13px;font-weight:700;color:var(--gray-800)}
+  .rep-files{font-size:11px;color:var(--gray-400);margin-top:1px}
+  .rep-stat-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:6px}
+  .rep-stat-label{color:var(--gray-400);font-weight:500}
+  .rep-stat-val{font-family:var(--mono);font-weight:700;color:var(--gray-700)}
+  .progress-bar{height:5px;background:var(--gray-100);border-radius:3px;overflow:hidden;margin-top:4px}
+  .progress-fill{height:100%;border-radius:3px;transition:width .4s}
+
+  .cat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  .cat-card{background:var(--white);border-radius:var(--radius);border:1px solid var(--gray-200);padding:14px 16px;box-shadow:var(--shadow)}
+  .cat-name{font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+  .cat-rev{font-size:16px;font-weight:800;font-family:var(--mono);color:var(--gray-800);margin-bottom:2px}
+  .cat-profit{font-size:12px;font-weight:700;font-family:var(--mono)}
+  .cat-count{font-size:10px;color:var(--gray-400);margin-top:4px}
+
+  .mb-24{margin-bottom:24px}.mb-16{margin-bottom:16px}
+  .tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;background:var(--gray-100);color:var(--gray-500)}
+
+  .portfolio-footer{text-align:center;padding:14px;font-size:11px;color:var(--gray-400);border-top:1px solid var(--gray-200);background:var(--white)}
+  .portfolio-footer a{color:var(--blue);font-weight:600;text-decoration:none}
+
+  @media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(3,1fr)}.rep-grid{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:700px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.rep-grid{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:repeat(2,1fr)}.cat-grid{grid-template-columns:repeat(2,1fr)}.hero{flex-direction:column;gap:16px}.hero-right{text-align:left;margin-left:0}}
 </style>
 </head>
 <body>
-<div class="container">
-  <div class="suite-badge">⚙️ ClientFlow Operations Suite</div>
-  <div class="icon-wrap">💰</div>
-  <div class="accent-bar"></div>
-  <h1>Financial & Profit Analysis</h1>
-  <p>Financial & Profit Analysis – Coming Soon. This module is currently in development and will be available in an upcoming release of the ClientFlow Operations Suite.</p>
-  <div class="status-card">
-    <div class="status-row">
-      <div class="dot dot-green"></div>
-      <span class="status-label">Core Dashboard &amp; Navigation</span>
-      <span class="status-val">Phase 1 · Complete</span>
+<div id="root"></div>
+<script type="text/babel">
+const {useState} = React;
+
+const REPS = [
+  {id:'Marcus',  color:'#2563EB'},
+  {id:'Jasmine', color:'#0D9488'},
+  {id:'Andre',   color:'#7C3AED'},
+  {id:'Sofia',   color:'#F59E0B'},
+  {id:'Daniel',  color:'#10B981'},
+];
+const CATEGORIES = ['Purchase','Refinance','FHA','VA','Commercial'];
+
+const INITIAL_RECORDS = [
+  {id:1,  file:'CF-1001', client:'Sarah Chen',            rep:'Marcus',  category:'Commercial',  revenue:14500, directCost:7200,  addCost:800,  stage:'Closed'},
+  {id:2,  file:'CF-1002', client:'Anthony Bell',          rep:'Marcus',  category:'Commercial',  revenue:32000, directCost:18000, addCost:2500, stage:'Closed'},
+  {id:3,  file:'CF-1003', client:'Patricia Okonkwo',      rep:'Jasmine', category:'VA',          revenue:9800,  directCost:6100,  addCost:400,  stage:'Closed'},
+  {id:4,  file:'CF-1004', client:'Kevin Patel',           rep:'Jasmine', category:'Purchase',    revenue:11200, directCost:9800,  addCost:900,  stage:'Active'},
+  {id:5,  file:'CF-1005', client:'Marcus & Diane Webb',   rep:'Andre',   category:'Refinance',   revenue:8500,  directCost:9200,  addCost:600,  stage:'Closed'},
+  {id:6,  file:'CF-1006', client:'Robert Hampton',        rep:'Andre',   category:'FHA',         revenue:7200,  directCost:4100,  addCost:300,  stage:'Closed'},
+  {id:7,  file:'CF-1007', client:'James Rivera',          rep:'Sofia',   category:'FHA',         revenue:6800,  directCost:4900,  addCost:250,  stage:'Active'},
+  {id:8,  file:'CF-1008', client:'Angela Washington',     rep:'Sofia',   category:'Purchase',    revenue:13500, directCost:7800,  addCost:700,  stage:'Closed'},
+  {id:9,  file:'CF-1009', client:'Tyler & Amanda Brooks', rep:'Daniel',  category:'VA',          revenue:10200, directCost:5600,  addCost:450,  stage:'Closed'},
+  {id:10, file:'CF-1010', client:'Carmen Reyes',          rep:'Daniel',  category:'Refinance',   revenue:5900,  directCost:3800,  addCost:200,  stage:'Closed'},
+  {id:11, file:'CF-1011', client:'Brian Steele',          rep:'Marcus',  category:'Commercial',  revenue:28000, directCost:14500, addCost:1800, stage:'Closed'},
+  {id:12, file:'CF-1012', client:'Denise Nguyen',         rep:'Jasmine', category:'Purchase',    revenue:7600,  directCost:7200,  addCost:850,  stage:'Active'},
+];
+
+const enrich = r => {
+  const totalCost = r.directCost + r.addCost;
+  const profit = r.revenue - totalCost;
+  const margin = r.revenue > 0 ? (profit / r.revenue) * 100 : 0;
+  return {...r, totalCost, profit, margin};
+};
+
+const finStatus = m => {
+  if (m >= 30) return {label:'High Margin', cls:'badge-green'};
+  if (m >= 15) return {label:'Healthy',     cls:'badge-teal'};
+  if (m >= 0)  return {label:'Low Margin',  cls:'badge-gold'};
+  return              {label:'Loss',         cls:'badge-red'};
+};
+
+const fmt$ = v => {
+  const s = '$' + Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
+  return v < 0 ? '-' + s : s;
+};
+const fmtPct = v => v.toFixed(1) + '%';
+const marginColor = m => m>=30?'var(--green)':m>=15?'var(--teal)':m>=0?'var(--gold)':'var(--red)';
+
+// KPI CARDS
+function KPICards({records}) {
+  const data = records.map(enrich);
+  const totalRev    = data.reduce((s,r)=>s+r.revenue,0);
+  const totalCost   = data.reduce((s,r)=>s+r.totalCost,0);
+  const totalProfit = data.reduce((s,r)=>s+r.profit,0);
+  const margin      = totalRev>0?(totalProfit/totalRev)*100:0;
+  const avgProfit   = data.length>0?totalProfit/data.length:0;
+  const repMap = {};
+  data.forEach(r=>{repMap[r.rep]=(repMap[r.rep]||0)+r.profit});
+  const top = Object.entries(repMap).sort((a,b)=>b[1]-a[1])[0];
+
+  return (
+    <div className="kpi-grid fade-up-1 mb-24">
+      {[
+        {icon:'💰',label:'Total Revenue',   value:fmt$(totalRev),              sub:`${data.length} files tracked`,  cls:'kpi-blue'},
+        {icon:'📤',label:'Total Cost',      value:fmt$(totalCost),             sub:'Direct + additional',           cls:'kpi-red'},
+        {icon:'📈',label:'Net Profit',      value:fmt$(totalProfit),           sub:totalProfit>=0?'Positive':'Loss', cls:'kpi-green'},
+        {icon:'📊',label:'Profit Margin',   value:fmtPct(margin),              sub:'Overall portfolio',             cls:'kpi-teal'},
+        {icon:'🗂',label:'Avg Profit/File', value:fmt$(Math.round(avgProfit)), sub:'Per file average',              cls:'kpi-gold'},
+        {icon:'🏆',label:'Top Rep',         value:top?top[0]:'—',             sub:top?fmt$(Math.round(top[1]))+' profit':'', cls:'kpi-purple'},
+      ].map((c,i)=>(
+        <div key={i} className={`kpi-card ${c.cls}`}>
+          <div className="kpi-icon">{c.icon}</div>
+          <div className="kpi-label">{c.label}</div>
+          <div className="kpi-value">{c.value}</div>
+          <div className="kpi-sub">{c.sub}</div>
+        </div>
+      ))}
     </div>
-    <div class="status-row">
-      <div class="dot dot-gray"></div>
-      <span class="status-label">Financial & Profit Analysis</span>
-      <span class="status-val">Planned · In Queue</span>
+  );
+}
+
+// ADD FORM
+const EMPTY = {file:'',client:'',rep:'Marcus',category:'Purchase',revenue:'',directCost:'',addCost:'',stage:'Active'};
+function AddForm({onAdd}) {
+  const [f,setF] = useState(EMPTY);
+  const set = (k,v) => setF(p=>({...p,[k]:v}));
+  const submit = () => {
+    if (!f.file||!f.client||!f.revenue) return;
+    onAdd({id:Date.now(),file:f.file,client:f.client,rep:f.rep,category:f.category,stage:f.stage,revenue:parseFloat(f.revenue)||0,directCost:parseFloat(f.directCost)||0,addCost:parseFloat(f.addCost)||0});
+    setF(EMPTY);
+  };
+  return (
+    <div className="card mb-24 fade-up-2">
+      <div className="card-body">
+        <div style={{fontSize:14,fontWeight:700,color:'var(--gray-800)',marginBottom:14}}>➕ Add Financial Record</div>
+        <div className="form-grid">
+          <div className="form-group"><label className="form-label">File ID *</label><input className="form-input" value={f.file} onChange={e=>set('file',e.target.value)} placeholder="CF-1013"/></div>
+          <div className="form-group"><label className="form-label">Client Name *</label><input className="form-input" value={f.client} onChange={e=>set('client',e.target.value)} placeholder="John Smith"/></div>
+          <div className="form-group"><label className="form-label">Assigned Rep</label><select className="form-select" value={f.rep} onChange={e=>set('rep',e.target.value)}>{REPS.map(r=><option key={r.id}>{r.id}</option>)}</select></div>
+          <div className="form-group"><label className="form-label">Category</label><select className="form-select" value={f.category} onChange={e=>set('category',e.target.value)}>{CATEGORIES.map(c=><option key={c}>{c}</option>)}</select></div>
+          <div className="form-group"><label className="form-label">Revenue ($) *</label><input className="form-input" type="number" value={f.revenue} onChange={e=>set('revenue',e.target.value)} placeholder="10000"/></div>
+          <div className="form-group"><label className="form-label">Direct Cost ($)</label><input className="form-input" type="number" value={f.directCost} onChange={e=>set('directCost',e.target.value)} placeholder="6000"/></div>
+          <div className="form-group"><label className="form-label">Additional Cost ($)</label><input className="form-input" type="number" value={f.addCost} onChange={e=>set('addCost',e.target.value)} placeholder="500"/></div>
+          <div className="form-group"><label className="form-label">Stage</label><select className="form-select" value={f.stage} onChange={e=>set('stage',e.target.value)}><option>Active</option><option>Closed</option><option>Pending</option></select></div>
+        </div>
+        <div className="form-actions">
+          <button className="btn btn-primary" onClick={submit}>Add Record</button>
+          <button className="btn btn-ghost" onClick={()=>setF(EMPTY)}>Clear Form</button>
+        </div>
+      </div>
     </div>
-    <div class="status-row">
-      <div class="dot dot-gray"></div>
-      <span class="status-label">API &amp; Automation Layer</span>
-      <span class="status-val">Future Phase</span>
+  );
+}
+
+// TABLE
+function FinTable({records, filter, onRemove}) {
+  const data = records.map(enrich).filter(r=>{
+    if (filter==='profitable') return r.margin>0;
+    if (filter==='lowmargin')  return r.margin>=0&&r.margin<15;
+    if (filter==='loss')       return r.margin<0;
+    return true;
+  });
+  return (
+    <div className="card mb-24">
+      <div className="table-wrap">
+        <table>
+          <thead><tr><th>File</th><th>Client</th><th>Rep</th><th>Category</th><th>Revenue</th><th>Total Cost</th><th>Profit</th><th>Margin %</th><th>Status</th><th>Stage</th><th></th></tr></thead>
+          <tbody>
+            {data.length===0&&<tr><td colSpan="11" style={{textAlign:'center',padding:'32px',color:'var(--gray-400)',fontSize:13}}>No records match this filter</td></tr>}
+            {data.map(r=>{
+              const fs = finStatus(r.margin);
+              const rep = REPS.find(x=>x.id===r.rep);
+              return (
+                <tr key={r.id}>
+                  <td style={{fontWeight:700,fontFamily:'var(--mono)',fontSize:12,color:'var(--gray-800)'}}>{r.file}</td>
+                  <td style={{fontWeight:600,color:'var(--gray-700)'}}>{r.client}</td>
+                  <td>
+                    <div style={{display:'flex',alignItems:'center',gap:7}}>
+                      <div style={{width:24,height:24,borderRadius:'50%',background:rep?.color||'#999',display:'flex',alignItems:'center',justifyContent:'center',fontSize:9,fontWeight:700,color:'white',flexShrink:0}}>{r.rep[0]}</div>
+                      <span style={{fontSize:12.5,fontWeight:600,color:'var(--gray-700)'}}>{r.rep}</span>
+                    </div>
+                  </td>
+                  <td><span className="tag">{r.category}</span></td>
+                  <td style={{fontFamily:'var(--mono)',fontWeight:600,color:'var(--blue)'}}>{fmt$(r.revenue)}</td>
+                  <td style={{fontFamily:'var(--mono)',fontWeight:600,color:'var(--gray-500)'}}>{fmt$(r.totalCost)}</td>
+                  <td style={{fontFamily:'var(--mono)',fontWeight:700,color:r.profit>=0?'var(--green)':'var(--red)'}}>{fmt$(r.profit)}</td>
+                  <td style={{fontFamily:'var(--mono)',fontWeight:700,color:marginColor(r.margin)}}>{fmtPct(r.margin)}</td>
+                  <td><span className={`badge ${fs.cls}`}><span className="badge-dot"/>{fs.label}</span></td>
+                  <td><span className="badge badge-gray">{r.stage}</span></td>
+                  <td><button className="btn-remove" onClick={()=>onRemove(r.id)}>Remove</button></td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
-  <a class="back-btn" href="index.html">← Back to Operations Suite</a>
-</div>
+  );
+}
+
+// CATEGORY SUMMARY
+function CategorySummary({records}) {
+  const data = records.map(enrich);
+  const cats = CATEGORIES.map(cat=>{
+    const items = data.filter(r=>r.category===cat);
+    if (!items.length) return null;
+    const rev=items.reduce((s,r)=>s+r.revenue,0);
+    const profit=items.reduce((s,r)=>s+r.profit,0);
+    const margin=rev>0?(profit/rev)*100:0;
+    return {cat,count:items.length,rev,profit,margin};
+  }).filter(Boolean);
+  const maxRev = Math.max(...cats.map(c=>c.rev),1);
+  return (
+    <div className="mb-24 fade-up-3">
+      <div className="section-hdr mb-16">
+        <div><div className="section-title">Revenue by Category</div><div className="section-sub">Portfolio breakdown across loan types</div></div>
+      </div>
+      <div className="cat-grid">
+        {cats.map(c=>(
+          <div key={c.cat} className="cat-card">
+            <div className="cat-name">{c.cat}</div>
+            <div className="cat-rev">{fmt$(c.rev)}</div>
+            <div className="cat-profit" style={{color:c.profit>=0?'var(--green)':'var(--red)'}}>{fmt$(c.profit)} profit</div>
+            <div className="cat-count">{c.count} file{c.count!==1?'s':''} · {fmtPct(c.margin)} margin</div>
+            <div className="progress-bar" style={{height:4,marginTop:8}}>
+              <div className="progress-fill" style={{width:`${(c.rev/maxRev)*100}%`,background:marginColor(c.margin)}}/>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// REP SNAPSHOT
+function RepSnapshot({records}) {
+  const data = records.map(enrich);
+  return (
+    <div className="mb-24 fade-up-4">
+      <div className="section-hdr mb-16">
+        <div><div className="section-title">Rep Profitability Snapshot</div><div className="section-sub">Revenue, profit, and margin breakdown by rep</div></div>
+      </div>
+      <div className="rep-grid">
+        {REPS.map(rep=>{
+          const rd = data.filter(r=>r.rep===rep.id);
+          if (!rd.length) return null;
+          const rev=rd.reduce((s,r)=>s+r.revenue,0);
+          const profit=rd.reduce((s,r)=>s+r.profit,0);
+          const avgM=rd.reduce((s,r)=>s+r.margin,0)/rd.length;
+          const mc=marginColor(avgM);
+          return (
+            <div key={rep.id} className="rep-card">
+              <div className="rep-top">
+                <div className="rep-avatar" style={{background:rep.color}}>{rep.id[0]}</div>
+                <div><div className="rep-name">{rep.id}</div><div className="rep-files">{rd.length} file{rd.length!==1?'s':''}</div></div>
+              </div>
+              <div className="rep-stat-row"><span className="rep-stat-label">Revenue</span><span className="rep-stat-val" style={{color:'var(--blue)'}}>{fmt$(rev)}</span></div>
+              <div className="rep-stat-row"><span className="rep-stat-label">Profit</span><span className="rep-stat-val" style={{color:profit>=0?'var(--green)':'var(--red)'}}>{fmt$(profit)}</span></div>
+              <div className="rep-stat-row"><span className="rep-stat-label">Avg Margin</span><span className="rep-stat-val" style={{color:mc}}>{fmtPct(avgM)}</span></div>
+              <div style={{marginTop:10}}>
+                <div style={{display:'flex',justifyContent:'space-between',fontSize:10,marginBottom:4}}>
+                  <span style={{color:'var(--gray-400)'}}>Margin</span>
+                  <span style={{fontWeight:700,color:mc}}>{fmtPct(avgM)}</span>
+                </div>
+                <div className="progress-bar"><div className="progress-fill" style={{width:`${Math.max(0,Math.min(avgM,100))}%`,background:mc}}/></div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// MAIN APP
+function App() {
+  const [records, setRecords] = useState(INITIAL_RECORDS);
+  const [filter, setFilter] = useState('all');
+  const addRecord = r => setRecords(p=>[...p,r]);
+  const removeRecord = id => setRecords(p=>p.filter(r=>r.id!==id));
+  const totalRev = records.map(enrich).reduce((s,r)=>s+r.revenue,0);
+
+  const filters=[
+    {key:'all',label:'All Records'},{key:'profitable',label:'Profitable'},
+    {key:'lowmargin',label:'Low Margin'},{key:'loss',label:'Loss'},
+  ];
+
+  return (
+    <div className="page">
+      <div className="topbar">
+        <div className="topbar-left">
+          <a className="back-btn" href="index.html">← Suite Home</a>
+          <div style={{width:1,height:20,background:'var(--gray-200)'}}/>
+          <div>
+            <div className="topbar-title">Financial & Profit Analysis</div>
+            <div className="topbar-sub">Revenue tracking · Cost analysis · Profit margin reporting</div>
+          </div>
+        </div>
+        <div className="topbar-right">
+          <div className="module-badge">💰 Phase 3</div>
+          <div className="status-pill"><div className="pulse-dot"/>Live Demo</div>
+        </div>
+      </div>
+
+      <div className="content">
+        <div className="hero fade-up">
+          <div className="hero-left">
+            <h1>Financial & Profit Analysis Dashboard</h1>
+            <p>Track revenue, cost, and profitability across files and reps. Identify high-margin opportunities and flag losses before they impact the bottom line.</p>
+            <div className="hero-badges">
+              <span className="hero-badge">💰 Revenue Tracking</span>
+              <span className="hero-badge">📊 Margin Analysis</span>
+              <span className="hero-badge">👥 {REPS.length} Reps Tracked</span>
+              <span className="hero-badge">🗂 {records.length} Files</span>
+            </div>
+          </div>
+          <div className="hero-right">
+            <div className="hero-stat">{fmt$(totalRev)}</div>
+            <div className="hero-stat-label">Total Portfolio Revenue</div>
+          </div>
+        </div>
+
+        <KPICards records={records}/>
+        <AddForm onAdd={addRecord}/>
+
+        <div className="section-hdr mb-16 fade-up-3">
+          <div><div className="section-title">Financial Records</div><div className="section-sub">All files with revenue, cost, profit, and margin calculations</div></div>
+          <div className="filter-tabs">{filters.map(f=><button key={f.key} className={`filter-btn ${filter===f.key?'active':''}`} onClick={()=>setFilter(f.key)}>{f.label}</button>)}</div>
+        </div>
+
+        <FinTable records={records} filter={filter} onRemove={removeRecord}/>
+        <CategorySummary records={records}/>
+        <RepSnapshot records={records}/>
+      </div>
+
+      <div className="portfolio-footer">
+        Built by <a href="https://linkedin.com/in/marcus-a-69ab2989" target="_blank">Marcus Albright</a> &nbsp;·&nbsp;
+        <a href="https://github.com/techByMarcus" target="_blank">GitHub</a> &nbsp;·&nbsp;
+        ClientFlow Operations Suite — Phase 3
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
 </body>
 </html>
