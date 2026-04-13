@@ -3,54 +3,758 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Advanced Decision Engine — ClientFlow Operations Suite</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<title>Decision Engine — ClientFlow Operations Suite</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'DM Sans',sans-serif;background:#F8FAFC;color:#1E293B;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
-  .container{text-align:center;max-width:520px}
-  .suite-badge{display:inline-flex;align-items:center;gap:6px;background:#0F1C2E;color:white;font-size:11px;font-weight:700;padding:5px 12px;border-radius:20px;margin-bottom:28px;letter-spacing:.5px}
-  .icon-wrap{width:80px;height:80px;border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 20px;background:#7C3AED18;border:2px solid #7C3AED40}
-  .accent-bar{width:60px;height:4px;background:#7C3AED;border-radius:2px;margin:0 auto 20px}
-  h1{font-size:26px;font-weight:700;color:#0F1C2E;letter-spacing:-.5px;margin-bottom:12px}
-  p{font-size:15px;color:#64748B;line-height:1.6;margin-bottom:28px}
-  .status-card{background:white;border:1px solid #E2E8F0;border-radius:16px;padding:24px 28px;margin-bottom:28px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 6px 20px rgba(0,0,0,.04)}
-  .status-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #F1F5F9;font-size:13px}
-  .status-row:last-child{border-bottom:none}
-  .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-  .dot-green{background:#10B981}
-  .dot-gray{background:#CBD5E1}
-  .status-label{font-weight:600;color:#334155;flex:1;text-align:left}
-  .status-val{color:#94A3B8;font-size:12px}
-  .back-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;background:#0F1C2E;color:white;border-radius:10px;text-decoration:none;font-size:14px;font-weight:600;transition:opacity .15s}
-  .back-btn:hover{opacity:.82}
+  :root{
+    --navy:#0F1C2E;--navy-mid:#162237;--navy-light:#1E3050;
+    --blue:#2563EB;--blue-light:#3B82F6;--blue-pale:#EFF6FF;
+    --teal:#0D9488;--teal-light:#14B8A6;--teal-pale:#F0FDFA;
+    --gold:#F59E0B;--gold-pale:#FFFBEB;
+    --red:#EF4444;--red-pale:#FEF2F2;
+    --green:#10B981;--green-pale:#ECFDF5;
+    --orange:#F97316;--orange-pale:#FFF7ED;
+    --gray-50:#F8FAFC;--gray-100:#F1F5F9;--gray-200:#E2E8F0;
+    --gray-300:#CBD5E1;--gray-400:#94A3B8;--gray-500:#64748B;
+    --gray-600:#475569;--gray-700:#334155;--gray-800:#1E293B;
+    --white:#FFFFFF;
+    --font:'DM Sans',sans-serif;
+    --mono:'DM Mono',monospace;
+    --radius:10px;--radius-lg:16px;
+    --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06);
+    --shadow-md:0 4px 6px rgba(0,0,0,.07),0 10px 30px rgba(0,0,0,.1);
+  }
+  body{font-family:var(--font);background:var(--gray-50);color:var(--gray-800);min-height:100vh;display:flex;flex-direction:column}
+  @keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+  @keyframes resultReveal{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+  .fade-up{animation:fadeInUp .35s ease both}
+  .fade-up-1{animation:fadeInUp .35s .05s ease both}
+  .fade-up-2{animation:fadeInUp .35s .10s ease both}
+  .fade-up-3{animation:fadeInUp .35s .15s ease both}
+  button{font-family:var(--font);cursor:pointer;border:none;outline:none}
+  input,select{font-family:var(--font)}
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-thumb{background:var(--gray-300);border-radius:2px}
+
+  /* TOPBAR */
+  .topbar{background:var(--white);border-bottom:1px solid var(--gray-200);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 0 var(--gray-200)}
+  .topbar-left{display:flex;align-items:center;gap:14px}
+  .back-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:var(--gray-100);border-radius:8px;font-size:13px;font-weight:600;color:var(--gray-600);text-decoration:none;transition:all .15s}
+  .back-btn:hover{background:var(--gray-200);color:var(--gray-800)}
+  .topbar-title{font-size:16px;font-weight:700;color:var(--gray-800);letter-spacing:-.3px}
+  .topbar-sub{font-size:12px;color:var(--gray-400)}
+  .topbar-divider{width:1px;height:20px;background:var(--gray-200)}
+  .topbar-right{display:flex;align-items:center;gap:10px}
+  .status-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--blue-pale);border:1px solid #BFDBFE;border-radius:20px;font-size:11px;font-weight:700;color:var(--blue)}
+  .pulse-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:pulse 2s infinite}
+  .module-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--navy);border-radius:20px;font-size:11px;font-weight:700;color:rgba(255,255,255,.85)}
+
+  /* CONTENT */
+  .content{flex:1;padding:24px 28px;max-width:1200px;width:100%;margin:0 auto}
+
+  /* HERO */
+  .hero{background:linear-gradient(135deg,#0D1B2E 0%,#162B50 40%,#0D3B6B 100%);border-radius:var(--radius-lg);padding:22px 28px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 20px rgba(15,28,46,.3)}
+  .hero-left h1{font-size:20px;font-weight:700;color:white;margin-bottom:4px;letter-spacing:-.4px}
+  .hero-left p{font-size:13px;color:rgba(255,255,255,.6);max-width:500px;line-height:1.5}
+  .hero-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .hero-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:20px;font-size:11px;font-weight:600;color:rgba(255,255,255,.85)}
+  .hero-right{text-align:right;flex-shrink:0;margin-left:24px}
+  .hero-stat{font-size:34px;font-weight:800;color:white;letter-spacing:-2px;line-height:1;font-family:var(--mono)}
+  .hero-stat-label{font-size:11px;color:rgba(255,255,255,.4);margin-top:4px;font-weight:500}
+
+  /* LAYOUT */
+  .engine-layout{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
+  .card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--gray-200);box-shadow:var(--shadow)}
+  .card-header{padding:18px 20px 0;display:flex;align-items:center;justify-content:space-between}
+  .card-title{font-size:14px;font-weight:700;color:var(--gray-700)}
+  .card-sub{font-size:11px;color:var(--gray-400);margin-top:2px}
+  .card-body{padding:18px 20px 20px}
+
+  /* FORM */
+  .form-group{margin-bottom:16px}
+  .form-label{display:block;font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:6px;letter-spacing:.2px}
+  .form-label span{font-weight:400;color:var(--gray-400);margin-left:4px}
+  .input-wrap{position:relative}
+  .input-prefix,.input-suffix{position:absolute;top:50%;transform:translateY(-50%);font-size:13px;font-weight:600;color:var(--gray-400);pointer-events:none}
+  .input-prefix{left:11px}
+  .input-suffix{right:11px}
+  .form-input{width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:14px;font-weight:600;color:var(--gray-800);background:var(--white);transition:border .15s,box-shadow .15s;font-family:var(--mono)}
+  .form-input.has-prefix{padding-left:26px}
+  .form-input.has-suffix{padding-right:36px}
+  .form-input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+  .form-input:hover:not(:focus){border-color:var(--gray-300)}
+  .form-select{width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;font-weight:600;color:var(--gray-700);background:var(--white);font-family:var(--font)}
+  .form-select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  .input-hint{font-size:11px;color:var(--gray-400);margin-top:4px}
+  .section-divider{display:flex;align-items:center;gap:10px;margin:18px 0 14px}
+  .section-divider span{font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:1px;white-space:nowrap}
+  .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:var(--gray-200)}
+
+  /* CALCULATE BUTTON */
+  .calc-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--navy) 0%,#1E3A6B 100%);color:white;border-radius:10px;font-size:15px;font-weight:700;letter-spacing:-.2px;transition:all .2s;border:none;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px}
+  .calc-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(15,28,46,.35)}
+  .calc-btn:active{transform:translateY(0)}
+
+  /* PRESET BUTTONS */
+  .preset-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .preset-btn{padding:5px 12px;border-radius:8px;font-size:12px;font-weight:600;background:var(--gray-100);color:var(--gray-600);border:1px solid var(--gray-200);cursor:pointer;transition:all .15s}
+  .preset-btn:hover{background:var(--blue-pale);border-color:var(--blue);color:var(--blue)}
+
+  /* RESULT PANEL */
+  .result-panel{border-radius:var(--radius-lg);overflow:hidden;animation:resultReveal .3s ease both}
+  .result-header{padding:24px 24px 20px}
+  .result-header.accept{background:linear-gradient(135deg,#052E16 0%,#064E3B 50%,#065F46 100%)}
+  .result-header.reject{background:linear-gradient(135deg,#450A0A 0%,#7F1D1D 50%,#991B1B 100%)}
+  .result-header.marginal{background:linear-gradient(135deg,#1C1400 0%,#451A03 50%,#78350F 100%)}
+  .result-verdict{font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;opacity:.7}
+  .result-verdict.accept{color:#6EE7B7}
+  .result-verdict.reject{color:#FCA5A5}
+  .result-verdict.marginal{color:#FDE68A}
+  .result-decision{font-size:32px;font-weight:800;color:white;letter-spacing:-1px;line-height:1;display:flex;align-items:center;gap:12px}
+  .result-reason{font-size:13px;margin-top:8px;line-height:1.5;opacity:.7;color:white}
+  .result-body{padding:20px 24px;background:var(--white)}
+
+  /* METRIC GRID */
+  .metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+  .metric-card{background:var(--gray-50);border-radius:10px;padding:14px;border:1px solid var(--gray-200)}
+  .metric-card.highlight{background:var(--green-pale);border-color:#A7F3D0}
+  .metric-card.highlight-red{background:var(--red-pale);border-color:#FECACA}
+  .metric-card.highlight-gold{background:var(--gold-pale);border-color:#FDE68A}
+  .metric-label{font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+  .metric-value{font-size:22px;font-weight:800;color:var(--gray-800);letter-spacing:-1px;font-family:var(--mono);line-height:1}
+  .metric-card.highlight .metric-value{color:var(--green)}
+  .metric-card.highlight-red .metric-value{color:var(--red)}
+  .metric-card.highlight-gold .metric-value{color:var(--gold)}
+  .metric-sub{font-size:11px;color:var(--gray-400);margin-top:4px}
+
+  /* BREAKDOWN TABLE */
+  .breakdown-table{width:100%;border-collapse:collapse;margin-bottom:16px}
+  .breakdown-table td{padding:9px 12px;font-size:13px;border-bottom:1px solid var(--gray-100)}
+  .breakdown-table tr:last-child td{border-bottom:none;font-weight:700;font-size:14px}
+  .breakdown-table .td-label{color:var(--gray-500)}
+  .breakdown-table .td-value{text-align:right;font-family:var(--mono);font-weight:600;color:var(--gray-800)}
+  .breakdown-table .td-value.cost{color:var(--red)}
+  .breakdown-table .td-value.rev{color:var(--blue)}
+  .breakdown-table .td-value.profit{color:var(--green)}
+  .breakdown-table .td-value.loss{color:var(--red)}
+  .breakdown-table tr.total-row td{background:var(--gray-50);font-weight:800}
+
+  /* GAUGE */
+  .gauge-wrap{margin:16px 0}
+  .gauge-track{height:10px;background:var(--gray-100);border-radius:5px;overflow:hidden;position:relative}
+  .gauge-fill{height:100%;border-radius:5px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+  .gauge-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--gray-400);margin-top:5px;font-weight:600}
+
+  /* HISTORY TABLE */
+  .history-table{width:100%;border-collapse:collapse}
+  .history-table thead th{padding:9px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid var(--gray-200);background:var(--gray-50)}
+  .history-table tbody td{padding:11px 12px;font-size:12.5px;border-bottom:1px solid var(--gray-100)}
+  .history-table tbody tr:last-child td{border-bottom:none}
+  .history-table tbody tr:hover{background:var(--gray-50)}
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600}
+  .badge-green{background:var(--green-pale);color:var(--green)}
+  .badge-red{background:var(--red-pale);color:var(--red)}
+  .badge-gold{background:var(--gold-pale);color:var(--gold)}
+  .badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+
+  /* BENCHMARKS */
+  .benchmark-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-100)}
+  .benchmark-row:last-child{border-bottom:none}
+  .benchmark-icon{font-size:16px;flex-shrink:0}
+  .benchmark-label{font-size:12.5px;font-weight:600;color:var(--gray-700);flex:1}
+  .benchmark-range{font-size:11px;color:var(--gray-400);font-family:var(--mono)}
+  .benchmark-status{font-size:11px;font-weight:700}
+
+  /* FOOTER */
+  .portfolio-footer{text-align:center;padding:14px;font-size:11px;color:var(--gray-400);border-top:1px solid var(--gray-200);background:var(--white)}
+  .portfolio-footer a{color:var(--blue);font-weight:600;text-decoration:none}
+
+  /* EMPTY RESULT */
+  .empty-result{text-align:center;padding:48px 24px;color:var(--gray-300)}
+  .empty-result-icon{font-size:48px;margin-bottom:12px}
+  .empty-result-text{font-size:14px;font-weight:600;color:var(--gray-400)}
+  .empty-result-sub{font-size:12px;margin-top:6px;color:var(--gray-300)}
+
+  .mb-20{margin-bottom:20px}
+  .mb-24{margin-bottom:24px}
+  .flex{display:flex}.items-center{align-items:center}.gap-8{gap:8px}.ml-auto{margin-left:auto}
+
+  @media(max-width:900px){.engine-layout{grid-template-columns:1fr}.metric-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:600px){.hero{flex-direction:column;gap:16px}.hero-right{text-align:left;margin-left:0}.form-row,.form-row-3{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="container">
-  <div class="suite-badge">⚙️ ClientFlow Operations Suite</div>
-  <div class="icon-wrap">⚡</div>
-  <div class="accent-bar"></div>
-  <h1>Advanced Decision Engine</h1>
-  <p>Advanced Decision Engine – Coming Soon. This module is currently in development and will be available in an upcoming release of the ClientFlow Operations Suite.</p>
-  <div class="status-card">
-    <div class="status-row">
-      <div class="dot dot-green"></div>
-      <span class="status-label">Core Dashboard &amp; Navigation</span>
-      <span class="status-val">Phase 1 · Complete</span>
-    </div>
-    <div class="status-row">
-      <div class="dot dot-gray"></div>
-      <span class="status-label">Advanced Decision Engine</span>
-      <span class="status-val">Planned · In Queue</span>
-    </div>
-    <div class="status-row">
-      <div class="dot dot-gray"></div>
-      <span class="status-label">API &amp; Automation Layer</span>
-      <span class="status-val">Future Phase</span>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <a class="back-btn" href="index.html">← Suite Home</a>
+    <div class="topbar-divider"></div>
+    <div>
+      <div class="topbar-title">Advanced Decision Engine</div>
+      <div class="topbar-sub">Load profitability analysis · Accept / Reject recommendation</div>
     </div>
   </div>
-  <a class="back-btn" href="index.html">← Back to Operations Suite</a>
+  <div class="topbar-right">
+    <div class="module-badge">⚡ Phase 5</div>
+    <div class="status-pill"><div class="pulse-dot"></div>Live Engine</div>
+  </div>
 </div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- HERO -->
+  <div class="hero fade-up">
+    <div class="hero-left">
+      <h1>Load Profitability Decision Engine</h1>
+      <p>Input load details to instantly calculate financial viability. The engine analyzes fuel cost, margin, and revenue per mile to generate a clear Accept or Reject recommendation.</p>
+      <div class="hero-badges">
+        <span class="hero-badge">⚡ Instant Calculation</span>
+        <span class="hero-badge">💰 Profit & Margin Analysis</span>
+        <span class="hero-badge">📊 Revenue Per Mile</span>
+        <span class="hero-badge">✅ Accept / Reject Output</span>
+        <span class="hero-badge">📋 Run History</span>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-stat" id="heroRunCount">0</div>
+      <div class="hero-stat-label">Loads Analyzed</div>
+    </div>
+  </div>
+
+  <!-- ENGINE LAYOUT -->
+  <div class="engine-layout">
+
+    <!-- LEFT: INPUT PANEL -->
+    <div>
+      <div class="card fade-up-1">
+        <div class="card-header">
+          <div>
+            <div class="card-title">⚙️ Load Input Parameters</div>
+            <div class="card-sub">Enter load details to run profitability analysis</div>
+          </div>
+        </div>
+        <div class="card-body">
+
+          <!-- PRESETS -->
+          <div style="margin-bottom:14px">
+            <div style="font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Quick Load Presets</div>
+            <div class="preset-row">
+              <button class="preset-btn" onclick="loadPreset('shorthaul')">📦 Short Haul</button>
+              <button class="preset-btn" onclick="loadPreset('longhaul')">🚛 Long Haul</button>
+              <button class="preset-btn" onclick="loadPreset('regional')">🗺️ Regional</button>
+              <button class="preset-btn" onclick="loadPreset('margin')">⚠️ Thin Margin</button>
+              <button class="preset-btn" onclick="clearForm()">🗑️ Clear</button>
+            </div>
+          </div>
+
+          <div class="section-divider"><span>Load Details</span></div>
+
+          <div class="form-group">
+            <label class="form-label">Load / Job Name <span>(optional)</span></label>
+            <input class="form-input" id="loadName" placeholder="e.g. Atlanta → Chicago — Industrial Parts" style="font-family:var(--font);font-size:13px;font-weight:500"/>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Total Miles</label>
+              <div class="input-wrap">
+                <input class="form-input has-suffix" type="number" id="miles" placeholder="850" min="1"/>
+                <span class="input-suffix">mi</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Freight Revenue (Pay)</label>
+              <div class="input-wrap">
+                <span class="input-prefix">$</span>
+                <input class="form-input has-prefix" type="number" id="revenue" placeholder="2200" min="0"/>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-divider"><span>Fuel & Vehicle</span></div>
+
+          <div class="form-row-3">
+            <div class="form-group">
+              <label class="form-label">Fuel Price</label>
+              <div class="input-wrap">
+                <span class="input-prefix">$</span>
+                <input class="form-input has-prefix" type="number" id="fuelPrice" placeholder="3.85" step="0.01" min="0"/>
+              </div>
+              <div class="input-hint">Per gallon</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Miles Per Gallon</label>
+              <div class="input-wrap">
+                <input class="form-input has-suffix" type="number" id="mpg" placeholder="6.5" step="0.1" min="1"/>
+                <span class="input-suffix">mpg</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Truck Type</label>
+              <select class="form-select" id="truckType" onchange="updateMpgHint()">
+                <option value="semi">Semi (18-Wheeler)</option>
+                <option value="box">Box Truck</option>
+                <option value="flatbed">Flatbed</option>
+                <option value="reefer">Refrigerated</option>
+                <option value="sprinter">Sprinter / Van</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="section-divider"><span>Additional Costs</span></div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Driver Pay</label>
+              <div class="input-wrap">
+                <span class="input-prefix">$</span>
+                <input class="form-input has-prefix" type="number" id="driverPay" placeholder="450" min="0"/>
+              </div>
+              <div class="input-hint">Total for this load</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tolls & Fees</label>
+              <div class="input-wrap">
+                <span class="input-prefix">$</span>
+                <input class="form-input has-prefix" type="number" id="tolls" placeholder="45" min="0"/>
+              </div>
+              <div class="input-hint">Tolls, scales, permits</div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Maintenance Allowance</label>
+              <div class="input-wrap">
+                <span class="input-prefix">$</span>
+                <input class="form-input has-prefix" type="number" id="maintenance" placeholder="120" min="0"/>
+              </div>
+              <div class="input-hint">Per-load estimate</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Other Costs</label>
+              <div class="input-wrap">
+                <span class="input-prefix">$</span>
+                <input class="form-input has-prefix" type="number" id="otherCosts" placeholder="0" min="0"/>
+              </div>
+              <div class="input-hint">Insurance, broker fee, etc.</div>
+            </div>
+          </div>
+
+          <div class="section-divider"><span>Decision Thresholds</span></div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Min Acceptable Margin %</label>
+              <div class="input-wrap">
+                <input class="form-input has-suffix" type="number" id="minMargin" value="15" min="0" max="100"/>
+                <span class="input-suffix">%</span>
+              </div>
+              <div class="input-hint">Reject if below this</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Min Revenue Per Mile</label>
+              <div class="input-wrap">
+                <span class="input-prefix">$</span>
+                <input class="form-input has-prefix" type="number" id="minRpm" value="1.75" step="0.05" min="0"/>
+              </div>
+              <div class="input-hint">Industry: $1.50–$2.50</div>
+            </div>
+          </div>
+
+          <button class="calc-btn" onclick="calculate()">
+            ⚡ Run Decision Analysis
+          </button>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: RESULT PANEL -->
+    <div>
+      <div id="resultContainer" class="fade-up-2">
+        <!-- Empty state -->
+        <div class="card" id="emptyResult">
+          <div class="card-body">
+            <div class="empty-result">
+              <div class="empty-result-icon">⚡</div>
+              <div class="empty-result-text">Ready to Analyze</div>
+              <div class="empty-result-sub">Enter load details and click<br/>"Run Decision Analysis" to get your recommendation.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Result (hidden until calculated) -->
+        <div id="resultPanel" style="display:none">
+
+          <div class="result-panel card mb-20" id="verdictCard">
+            <div class="result-header" id="resultHeader">
+              <div class="result-verdict" id="resultVerdict"></div>
+              <div class="result-decision" id="resultDecision"></div>
+              <div class="result-reason" id="resultReason"></div>
+            </div>
+            <div class="result-body">
+
+              <div class="metric-grid" id="metricGrid">
+                <!-- Filled by JS -->
+              </div>
+
+              <!-- PROFIT GAUGE -->
+              <div style="margin-bottom:16px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                  <span style="font-size:12px;font-weight:700;color:var(--gray-600)">Profit Margin</span>
+                  <span style="font-size:13px;font-weight:800;font-family:var(--mono)" id="gaugeLabel"></span>
+                </div>
+                <div class="gauge-track">
+                  <div class="gauge-fill" id="gaugeFill" style="width:0%"></div>
+                </div>
+                <div class="gauge-labels">
+                  <span>0%</span><span>15% (Min)</span><span>25%</span><span>35%+</span>
+                </div>
+              </div>
+
+              <!-- COST BREAKDOWN -->
+              <div style="font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Cost Breakdown</div>
+              <table class="breakdown-table" id="breakdownTable">
+                <!-- Filled by JS -->
+              </table>
+
+            </div>
+          </div>
+
+          <!-- BENCHMARK CARD -->
+          <div class="card" id="benchmarkCard">
+            <div class="card-header"><div class="card-title">📊 Industry Benchmarks</div></div>
+            <div class="card-body" id="benchmarkBody">
+              <!-- Filled by JS -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY TABLE -->
+  <div class="card fade-up-3 mb-24" id="historyCard" style="display:none">
+    <div class="card-header">
+      <div>
+        <div class="card-title">📋 Analysis Run History</div>
+        <div class="card-sub">All loads analyzed this session</div>
+      </div>
+      <button onclick="clearHistory()" style="padding:5px 10px;border-radius:7px;background:var(--gray-100);color:var(--gray-500);font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--gray-200)">Clear History</button>
+    </div>
+    <div class="card-body" style="padding:0">
+      <div class="table-wrap">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Load Name</th>
+              <th>Miles</th>
+              <th>Revenue</th>
+              <th>Total Cost</th>
+              <th>Profit</th>
+              <th>Margin</th>
+              <th>RPM</th>
+              <th>Decision</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="portfolio-footer">
+  Built by <a href="https://linkedin.com/in/marcus-a-69ab2989" target="_blank">Marcus Albright</a> &nbsp;·&nbsp;
+  <a href="https://github.com/techByMarcus/ClientFlow-CRM-Demo" target="_blank">View on GitHub</a> &nbsp;·&nbsp;
+  ClientFlow Operations Suite — Phase 5
+</div>
+
+<script>
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let history = [];
+let runCount = 0;
+
+// ── PRESETS ───────────────────────────────────────────────────────────────────
+const PRESETS = {
+  shorthaul: {
+    loadName: 'Atlanta, GA → Nashville, TN — Auto Parts',
+    miles: 250, revenue: 1100, fuelPrice: 3.89, mpg: 7.2,
+    driverPay: 280, tolls: 18, maintenance: 65, otherCosts: 0,
+    truckType: 'semi', minMargin: 15, minRpm: 1.75
+  },
+  longhaul: {
+    loadName: 'Dallas, TX → Chicago, IL — Industrial Equipment',
+    miles: 920, revenue: 3200, fuelPrice: 3.75, mpg: 6.2,
+    driverPay: 680, tolls: 85, maintenance: 180, otherCosts: 50,
+    truckType: 'semi', minMargin: 15, minRpm: 1.75
+  },
+  regional: {
+    loadName: 'Charlotte, NC → Richmond, VA — Consumer Goods',
+    miles: 340, revenue: 1050, fuelPrice: 3.95, mpg: 8.5,
+    driverPay: 310, tolls: 22, maintenance: 75, otherCosts: 25,
+    truckType: 'box', minMargin: 15, minRpm: 1.50
+  },
+  margin: {
+    loadName: 'Memphis, TN → St. Louis, MO — Mixed Freight',
+    miles: 285, revenue: 780, fuelPrice: 4.10, mpg: 5.8,
+    driverPay: 380, tolls: 30, maintenance: 90, otherCosts: 40,
+    truckType: 'semi', minMargin: 15, minRpm: 1.75
+  }
+};
+
+function loadPreset(key) {
+  const p = PRESETS[key];
+  if (!p) return;
+  document.getElementById('loadName').value = p.loadName;
+  document.getElementById('miles').value = p.miles;
+  document.getElementById('revenue').value = p.revenue;
+  document.getElementById('fuelPrice').value = p.fuelPrice;
+  document.getElementById('mpg').value = p.mpg;
+  document.getElementById('driverPay').value = p.driverPay;
+  document.getElementById('tolls').value = p.tolls;
+  document.getElementById('maintenance').value = p.maintenance;
+  document.getElementById('otherCosts').value = p.otherCosts;
+  document.getElementById('truckType').value = p.truckType;
+  document.getElementById('minMargin').value = p.minMargin;
+  document.getElementById('minRpm').value = p.minRpm;
+}
+
+function clearForm() {
+  ['loadName','miles','revenue','fuelPrice','mpg','driverPay','tolls','maintenance','otherCosts'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('minMargin').value = 15;
+  document.getElementById('minRpm').value = 1.75;
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+const fmt$ = v => '$' + Math.abs(v).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+const fmtInt$ = v => '$' + Math.abs(Math.round(v)).toLocaleString('en-US');
+const val = id => parseFloat(document.getElementById(id).value) || 0;
+const str = id => document.getElementById(id).value.trim();
+
+// ── CALCULATE ─────────────────────────────────────────────────────────────────
+function calculate() {
+  const miles       = val('miles');
+  const revenue     = val('revenue');
+  const fuelPrice   = val('fuelPrice');
+  const mpg         = val('mpg');
+  const driverPay   = val('driverPay');
+  const tolls       = val('tolls');
+  const maintenance = val('maintenance');
+  const otherCosts  = val('otherCosts');
+  const minMargin   = val('minMargin');
+  const minRpm      = val('minRpm');
+  const loadName    = str('loadName') || `Load #${runCount + 1}`;
+
+  // Validation
+  if (!miles || !revenue || !fuelPrice || !mpg) {
+    alert('Please fill in Miles, Revenue, Fuel Price, and MPG to run the analysis.');
+    return;
+  }
+
+  // Core calculations
+  const gallonsUsed  = miles / mpg;
+  const fuelCost     = gallonsUsed * fuelPrice;
+  const totalCost    = fuelCost + driverPay + tolls + maintenance + otherCosts;
+  const profit       = revenue - totalCost;
+  const marginPct    = revenue > 0 ? (profit / revenue) * 100 : 0;
+  const rpm          = miles > 0 ? revenue / miles : 0;
+  const costPerMile  = miles > 0 ? totalCost / miles : 0;
+  const profitPerMile = miles > 0 ? profit / miles : 0;
+
+  // Decision logic
+  const marginOk  = marginPct >= minMargin;
+  const rpmOk     = rpm >= minRpm;
+  const profitable = profit > 0;
+
+  let verdict, decisionText, decisionIcon, reason, verdictClass;
+
+  if (!profitable) {
+    verdict = 'reject'; decisionIcon = '🔴'; decisionText = 'REJECT — Net Loss';
+    reason = `This load generates a net loss of ${fmt$(Math.abs(profit))}. Total operating costs exceed freight revenue. Do not accept without renegotiating rate.`;
+    verdictClass = 'reject';
+  } else if (marginOk && rpmOk) {
+    verdict = 'accept'; decisionIcon = '✅'; decisionText = 'ACCEPT — Strong Load';
+    reason = `Profit margin of ${marginPct.toFixed(1)}% exceeds your ${minMargin}% threshold and revenue per mile of ${fmt$(rpm)} meets your $${minRpm} minimum. This is a viable load.`;
+    verdictClass = 'accept';
+  } else if (!marginOk && !rpmOk) {
+    verdict = 'reject'; decisionIcon = '🔴'; decisionText = 'REJECT — Below Thresholds';
+    reason = `Both margin (${marginPct.toFixed(1)}% vs ${minMargin}% min) and revenue per mile (${fmt$(rpm)} vs $${minRpm} min) fall below your requirements. Negotiate a higher rate or pass.`;
+    verdictClass = 'reject';
+  } else if (!marginOk || !rpmOk) {
+    verdict = 'marginal'; decisionIcon = '⚠️'; decisionText = 'MARGINAL — Review Carefully';
+    const failReason = !marginOk ? `margin is ${marginPct.toFixed(1)}% (min: ${minMargin}%)` : `RPM is ${fmt$(rpm)} (min: $${minRpm})`;
+    reason = `Load is profitable but ${failReason} falls below your threshold. Accept only if backhaul opportunity or strategic value justifies the reduced margin.`;
+    verdictClass = 'marginal';
+  }
+
+  // Update verdict header
+  document.getElementById('emptyResult').style.display = 'none';
+  document.getElementById('resultPanel').style.display = 'block';
+
+  const header = document.getElementById('resultHeader');
+  header.className = `result-header ${verdictClass}`;
+  document.getElementById('resultVerdict').className = `result-verdict ${verdictClass}`;
+  document.getElementById('resultVerdict').textContent = 'Decision Engine Recommendation';
+  document.getElementById('resultDecision').innerHTML = `${decisionIcon} ${decisionText}`;
+  document.getElementById('resultReason').textContent = reason;
+
+  // Metrics
+  const profitColor = profit >= 0 ? 'highlight' : 'highlight-red';
+  const marginColor = marginOk ? 'highlight' : profit < 0 ? 'highlight-red' : 'highlight-gold';
+  const rpmColor    = rpmOk ? 'highlight' : 'highlight-gold';
+
+  document.getElementById('metricGrid').innerHTML = `
+    <div class="metric-card ${profitColor}">
+      <div class="metric-label">Net Profit</div>
+      <div class="metric-value">${profit >= 0 ? '' : '-'}${fmtInt$(profit)}</div>
+      <div class="metric-sub">After all costs</div>
+    </div>
+    <div class="metric-card ${marginColor}">
+      <div class="metric-label">Profit Margin</div>
+      <div class="metric-value">${marginPct.toFixed(1)}%</div>
+      <div class="metric-sub">Min: ${minMargin}%</div>
+    </div>
+    <div class="metric-card ${rpmColor}">
+      <div class="metric-label">Revenue / Mile</div>
+      <div class="metric-value">${fmt$(rpm)}</div>
+      <div class="metric-sub">Min: $${minRpm}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Total Revenue</div>
+      <div class="metric-value">${fmtInt$(revenue)}</div>
+      <div class="metric-sub">Freight pay</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Total Cost</div>
+      <div class="metric-value">${fmtInt$(totalCost)}</div>
+      <div class="metric-sub">All expenses</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Cost / Mile</div>
+      <div class="metric-value">${fmt$(costPerMile)}</div>
+      <div class="metric-sub">Operating cost rate</div>
+    </div>
+  `;
+
+  // Gauge
+  const gaugeWidth = Math.min(Math.max(marginPct, 0), 40) / 40 * 100;
+  const gaugeColor = marginOk ? 'var(--green)' : profit < 0 ? 'var(--red)' : 'var(--gold)';
+  document.getElementById('gaugeFill').style.width = gaugeWidth + '%';
+  document.getElementById('gaugeFill').style.background = gaugeColor;
+  document.getElementById('gaugeLabel').style.color = gaugeColor;
+  document.getElementById('gaugeLabel').textContent = marginPct.toFixed(1) + '%';
+
+  // Breakdown table
+  document.getElementById('breakdownTable').innerHTML = `
+    <tr><td class="td-label">Freight Revenue</td><td class="td-value rev">+${fmtInt$(revenue)}</td></tr>
+    <tr><td class="td-label">Fuel Cost (${gallonsUsed.toFixed(1)} gal × $${fuelPrice})</td><td class="td-value cost">-${fmtInt$(fuelCost)}</td></tr>
+    ${driverPay > 0 ? `<tr><td class="td-label">Driver Pay</td><td class="td-value cost">-${fmtInt$(driverPay)}</td></tr>` : ''}
+    ${tolls > 0 ? `<tr><td class="td-label">Tolls & Fees</td><td class="td-value cost">-${fmtInt$(tolls)}</td></tr>` : ''}
+    ${maintenance > 0 ? `<tr><td class="td-label">Maintenance Allowance</td><td class="td-value cost">-${fmtInt$(maintenance)}</td></tr>` : ''}
+    ${otherCosts > 0 ? `<tr><td class="td-label">Other Costs</td><td class="td-value cost">-${fmtInt$(otherCosts)}</td></tr>` : ''}
+    <tr class="total-row">
+      <td class="td-label">Net Profit</td>
+      <td class="td-value ${profit >= 0 ? 'profit' : 'loss'}">${profit >= 0 ? '+' : '-'}${fmtInt$(profit)}</td>
+    </tr>
+  `;
+
+  // Benchmarks
+  document.getElementById('benchmarkBody').innerHTML = `
+    <div class="benchmark-row">
+      <div class="benchmark-icon">💰</div>
+      <div>
+        <div class="benchmark-label">Profit Margin</div>
+        <div class="benchmark-range">Industry target: 15–25% | Your result: ${marginPct.toFixed(1)}%</div>
+      </div>
+      <div class="benchmark-status" style="color:${marginOk ? 'var(--green)' : profit < 0 ? 'var(--red)' : 'var(--gold)'}">${marginOk ? '✓ Meets target' : profit < 0 ? '✗ Net loss' : '⚠ Below target'}</div>
+    </div>
+    <div class="benchmark-row">
+      <div class="benchmark-icon">🛣️</div>
+      <div>
+        <div class="benchmark-label">Revenue Per Mile</div>
+        <div class="benchmark-range">Industry range: $1.50–$2.50 | Your result: ${fmt$(rpm)}</div>
+      </div>
+      <div class="benchmark-status" style="color:${rpmOk ? 'var(--green)' : 'var(--gold)'}">${rpmOk ? '✓ Meets target' : '⚠ Below target'}</div>
+    </div>
+    <div class="benchmark-row">
+      <div class="benchmark-icon">⛽</div>
+      <div>
+        <div class="benchmark-label">Fuel as % of Revenue</div>
+        <div class="benchmark-range">Ideal: under 30% | Your result: ${((fuelCost/revenue)*100).toFixed(1)}%</div>
+      </div>
+      <div class="benchmark-status" style="color:${fuelCost/revenue < 0.30 ? 'var(--green)' : 'var(--gold)'}">${fuelCost/revenue < 0.30 ? '✓ Healthy' : '⚠ High'}</div>
+    </div>
+    <div class="benchmark-row">
+      <div class="benchmark-icon">🔧</div>
+      <div>
+        <div class="benchmark-label">Cost Per Mile</div>
+        <div class="benchmark-range">Industry avg: $1.20–$1.80 | Your result: ${fmt$(costPerMile)}</div>
+      </div>
+      <div class="benchmark-status" style="color:${costPerMile <= 1.80 ? 'var(--green)' : 'var(--gold)'}">${costPerMile <= 1.80 ? '✓ On target' : '⚠ High overhead'}</div>
+    </div>
+  `;
+
+  // History
+  runCount++;
+  document.getElementById('heroRunCount').textContent = runCount;
+  history.unshift({
+    num: runCount, loadName, miles: miles.toLocaleString(), revenue,
+    totalCost, profit, marginPct, rpm, verdict
+  });
+  renderHistory();
+}
+
+// ── HISTORY ───────────────────────────────────────────────────────────────────
+function renderHistory() {
+  document.getElementById('historyCard').style.display = 'block';
+  const badgeMap = {
+    accept: '<span class="badge badge-green"><span class="badge-dot"></span>Accept</span>',
+    reject: '<span class="badge badge-red"><span class="badge-dot"></span>Reject</span>',
+    marginal: '<span class="badge badge-gold"><span class="badge-dot"></span>Marginal</span>',
+  };
+  document.getElementById('historyBody').innerHTML = history.map(h => `
+    <tr>
+      <td style="font-size:11px;color:var(--gray-400);font-family:var(--mono)">#${h.num}</td>
+      <td style="font-weight:600;color:var(--gray-700);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h.loadName}</td>
+      <td style="font-family:var(--mono)">${h.miles} mi</td>
+      <td style="font-family:var(--mono);color:var(--blue);font-weight:600">${fmtInt$(h.revenue)}</td>
+      <td style="font-family:var(--mono);color:var(--gray-600)">${fmtInt$(h.totalCost)}</td>
+      <td style="font-family:var(--mono);font-weight:700;color:${h.profit >= 0 ? 'var(--green)' : 'var(--red)'}">${h.profit >= 0 ? '+' : '-'}${fmtInt$(h.profit)}</td>
+      <td style="font-family:var(--mono);font-weight:700;color:${h.marginPct >= 15 ? 'var(--green)' : h.profit < 0 ? 'var(--red)' : 'var(--gold)'}">${h.marginPct.toFixed(1)}%</td>
+      <td style="font-family:var(--mono)">${fmt$(h.rpm)}</td>
+      <td>${badgeMap[h.verdict] || ''}</td>
+    </tr>
+  `).join('');
+}
+
+function clearHistory() {
+  history = [];
+  runCount = 0;
+  document.getElementById('heroRunCount').textContent = 0;
+  document.getElementById('historyCard').style.display = 'none';
+  document.getElementById('historyBody').innerHTML = '';
+  document.getElementById('emptyResult').style.display = 'block';
+  document.getElementById('resultPanel').style.display = 'none';
+}
+
+// ── INIT: load a demo preset so page isn't empty ───────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  loadPreset('longhaul');
+});
+</script>
 </body>
 </html>
