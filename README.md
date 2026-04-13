@@ -82,8 +82,7 @@ ClientFlow reflects systems used in:
 ## 👤 Author
 
 Marcus Albright  
-https://github.com/tech
+https://github.com/techbymarcus
 
 
-![Dashboard](https://raw.githubusercontent.com/techByMarcus/ClientFlow-CRM-Demo/main/images/dashboard.png?raw=1)
 
