@@ -83,3 +83,4 @@ ClientFlow reflects systems used in:
 
 Marcus Albright  
 https://github.com/techByMarcus
+![Dashboard](images/dashboard.png)
