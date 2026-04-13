@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ClientFlow Operations Suite — Multi-Module Platform | Built by Marcus Albright</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<meta name="description" content="ClientFlow Operations Suite — A modular operations platform for workflow visibility, KPI tracking, and decision-making across sales, logistics, and finance. Built by Marcus Albright."/>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --navy:#0F1C2E;--navy-mid:#162237;--navy-light:#1E3050;
+    --blue:#2563EB;--blue-light:#3B82F6;--blue-pale:#EFF6FF;
+    --teal:#0D9488;--teal-light:#14B8A6;--teal-pale:#F0FDFA;
+    --gold:#F59E0B;--gold-pale:#FFFBEB;
+    --red:#EF4444;--red-pale:#FEF2F2;
+    --green:#10B981;--green-pale:#ECFDF5;
+    --purple:#7C3AED;--purple-pale:#F5F3FF;
+    --gray-50:#F8FAFC;--gray-100:#F1F5F9;--gray-200:#E2E8F0;
+    --gray-300:#CBD5E1;--gray-400:#94A3B8;--gray-500:#64748B;
+    --gray-600:#475569;--gray-700:#334155;--gray-800:#1E293B;
+    --white:#FFFFFF;
+    --sidebar-w:240px;
+    --font:'DM Sans',sans-serif;
+    --mono:'DM Mono',monospace;
+    --radius:10px;--radius-lg:16px;
+    --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06);
+    --shadow-md:0 4px 6px rgba(0,0,0,.07),0 10px 30px rgba(0,0,0,.1);
+  }
+  body{font-family:var(--font);background:var(--gray-50);color:var(--gray-800);line-height:1.5}
+  @keyframes fadeInUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+  .fade-in{animation:fadeIn .4s ease forwards}
+  .fade-up{animation:fadeInUp .35s ease forwards}
+  .fade-up-1{animation:fadeInUp .35s .05s ease both}
+  .fade-up-2{animation:fadeInUp .35s .1s ease both}
+  .fade-up-3{animation:fadeInUp .35s .15s ease both}
+  .fade-up-4{animation:fadeInUp .35s .2s ease both}
+  button{font-family:var(--font);cursor:pointer;border:none;outline:none}
+  input,textarea,select{font-family:var(--font)}
+  ::-webkit-scrollbar{width:4px;height:4px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--gray-300);border-radius:2px}
+
+  /* LAYOUT */
+  .app{display:flex;height:100vh;overflow:hidden}
+
+  /* SIDEBAR */
+  .sidebar{
+    width:var(--sidebar-w);flex-shrink:0;
+    background:linear-gradient(180deg,#0D1B2E 0%,#0F1C2E 60%,#0D2040 100%);
+    display:flex;flex-direction:column;overflow:hidden;
+    border-right:1px solid rgba(255,255,255,.04);
+  }
+  .sidebar-brand{
+    padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .brand-logo{
+    display:flex;align-items:center;gap:10px;margin-bottom:4px;
+  }
+  .brand-icon{
+    width:36px;height:36px;
+    background:linear-gradient(135deg,var(--blue),var(--teal));
+    border-radius:10px;display:flex;align-items:center;justify-content:center;
+    font-size:18px;box-shadow:0 2px 8px rgba(37,99,235,.35);
+  }
+  .brand-name{font-size:15px;font-weight:700;color:var(--white);letter-spacing:-.3px}
+  .brand-sub{font-size:10.5px;color:rgba(255,255,255,.4);font-weight:400}
+  .sidebar-nav{flex:1;padding:12px 10px;overflow-y:auto}
+  .nav-section{margin-bottom:20px}
+  .nav-label{
+    font-size:9.5px;font-weight:600;color:rgba(255,255,255,.3);
+    letter-spacing:1.2px;text-transform:uppercase;padding:0 8px;margin-bottom:6px;
+  }
+  .nav-item{
+    display:flex;align-items:center;gap:10px;padding:9px 10px;
+    border-radius:8px;cursor:pointer;transition:all .15s;margin-bottom:2px;
+    color:rgba(255,255,255,.55);font-size:13.5px;font-weight:500;
+    text-decoration:none;
+  }
+  .nav-item:hover{background:rgba(255,255,255,.07);color:var(--white)}
+  .nav-item.active{background:var(--blue);color:var(--white);box-shadow:0 2px 8px rgba(37,99,235,.4)}
+  .nav-icon{font-size:15px;width:18px;text-align:center;flex-shrink:0}
+  .nav-badge{
+    margin-left:auto;background:var(--red);color:white;
+    font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;
+  }
+  .sidebar-footer{
+    padding:14px 10px;border-top:1px solid rgba(255,255,255,.08);
+  }
+  .user-card{
+    display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;
+    background:rgba(255,255,255,.05);
+  }
+  .user-avatar{
+    width:32px;height:32px;border-radius:50%;background:var(--teal);
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:700;color:white;flex-shrink:0;
+  }
+  .user-name{font-size:12.5px;font-weight:600;color:var(--white)}
+  .user-nmls{font-size:10px;color:rgba(255,255,255,.4)}
+
+  /* MAIN */
+  .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+  .topbar{
+    background:var(--white);border-bottom:1px solid var(--gray-200);
+    padding:0 24px;height:56px;display:flex;align-items:center;
+    justify-content:space-between;flex-shrink:0;
+    box-shadow:0 1px 0 var(--gray-200);
+  }
+  .topbar-left{display:flex;align-items:center;gap:12px}
+  .page-title{font-size:17px;font-weight:700;color:var(--gray-800);letter-spacing:-.3px}
+  .page-sub{font-size:12px;color:var(--gray-400);font-weight:400}
+  .topbar-right{display:flex;align-items:center;gap:10px}
+  .status-pill{
+    display:inline-flex;align-items:center;gap:5px;padding:4px 10px;
+    background:var(--green-pale);border:1px solid #A7F3D0;border-radius:20px;
+    font-size:11px;font-weight:700;color:var(--green);
+  }
+  .status-dot-pulse{
+    width:6px;height:6px;border-radius:50%;background:var(--green);
+    animation:pulse 2s infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .topbar-divider{width:1px;height:20px;background:var(--gray-200);margin:0 4px}
+  .btn{
+    display:inline-flex;align-items:center;gap:6px;padding:7px 14px;
+    border-radius:8px;font-size:13px;font-weight:600;transition:all .15s;cursor:pointer;
+  }
+  .btn-primary{background:var(--blue);color:white;border:none}
+  .btn-primary:hover{background:var(--blue-light)}
+  .btn-ghost{background:transparent;color:var(--gray-600);border:1px solid var(--gray-200)}
+  .btn-ghost:hover{background:var(--gray-50)}
+  .btn-sm{padding:5px 10px;font-size:12px}
+
+  .content{flex:1;overflow-y:auto;padding:24px 28px}
+
+  /* CARDS */
+  .card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--gray-200);box-shadow:0 1px 3px rgba(0,0,0,.06),0 6px 20px rgba(0,0,0,.04)}
+  .card-header{padding:18px 20px 0;display:flex;align-items:center;justify-content:space-between}
+  .card-title{font-size:14px;font-weight:700;color:var(--gray-700)}
+  .card-body{padding:16px 20px 20px}
+
+  /* STAT CARDS */
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+  .stat-card{
+    background:var(--white);border-radius:var(--radius-lg);
+    border:1px solid var(--gray-200);padding:18px 20px;
+    box-shadow:var(--shadow);position:relative;overflow:hidden;
+    transition:transform .15s,box-shadow .15s;
+  }
+  .stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+  .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .stat-card.blue::before{background:var(--blue)}
+  .stat-card.teal::before{background:var(--teal)}
+  .stat-card.gold::before{background:var(--gold)}
+  .stat-card.green::before{background:var(--green)}
+  .stat-label{font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+  .stat-value{font-size:28px;font-weight:800;color:var(--gray-800);letter-spacing:-1.5px;line-height:1;font-family:var(--mono)}
+  .stat-sub{font-size:12px;color:var(--gray-400);margin-top:6px}
+  .stat-change{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:2px 6px;border-radius:4px;margin-top:6px}
+  .stat-change.up{background:var(--green-pale);color:var(--green)}
+  .stat-change.down{background:var(--red-pale);color:var(--red)}
+  .stat-icon{font-size:20px;margin-bottom:8px}
+
+  /* PIPELINE KANBAN */
+  .kanban{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px}
+  .kanban-col{flex-shrink:0;width:200px;background:var(--gray-50);border-radius:var(--radius);border:1px solid var(--gray-200);}
+  .kanban-col-header{padding:10px 12px;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;}
+  .kanban-col-title{font-size:12px;font-weight:700;color:var(--gray-600)}
+  .kanban-count{font-size:10px;font-weight:700;background:var(--gray-200);color:var(--gray-500);padding:1px 6px;border-radius:10px;}
+  .kanban-cards{padding:8px;display:flex;flex-direction:column;gap:8px;min-height:80px}
+  .kanban-card{background:var(--white);border-radius:8px;border:1px solid var(--gray-200);padding:10px 12px;cursor:pointer;transition:all .18s cubic-bezier(.2,.8,.4,1);box-shadow:var(--shadow);}
+  .kanban-card:hover{border-color:var(--blue);box-shadow:0 2px 8px rgba(37,99,235,.15);transform:translateY(-1px)}
+  .kanban-card.stale{border-left:3px solid var(--red)}
+  .kanban-card.warning{border-left:3px solid var(--gold)}
+  .kc-name{font-size:12.5px;font-weight:600;color:var(--gray-800);margin-bottom:4px}
+  .kc-amount{font-size:11px;font-weight:700;color:var(--blue);font-family:var(--mono)}
+  .kc-type{font-size:10px;color:var(--gray-400);margin-bottom:6px}
+  .kc-days{font-size:10px;font-weight:500;padding:2px 6px;border-radius:4px;display:inline-block}
+  .kc-days.ok{background:var(--green-pale);color:var(--green)}
+  .kc-days.warn{background:var(--gold-pale);color:var(--gold)}
+  .kc-days.late{background:var(--red-pale);color:var(--red)}
+
+  /* TABLE */
+  .table-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse}
+  thead th{padding:11px 14px;text-align:left;font-size:10.5px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--gray-200);background:var(--gray-50);white-space:nowrap;}
+  tbody td{padding:12px 14px;font-size:13px;border-bottom:1px solid var(--gray-100)}
+  tbody tr{transition:background .1s}
+  tbody tr:hover{background:var(--gray-50)}
+  tbody tr:last-child td{border-bottom:none}
+  .td-name{font-weight:600;color:var(--gray-800)}
+  .td-amount{font-family:var(--mono);font-weight:600;color:var(--blue)}
+
+  /* BADGES */
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600}
+  .badge-blue{background:var(--blue-pale);color:var(--blue)}
+  .badge-teal{background:var(--teal-pale);color:var(--teal)}
+  .badge-green{background:var(--green-pale);color:var(--green)}
+  .badge-gold{background:var(--gold-pale);color:var(--gold)}
+  .badge-red{background:var(--red-pale);color:var(--red)}
+  .badge-gray{background:var(--gray-100);color:var(--gray-500)}
+  .badge-dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+  /* AUTOMATION */
+  .auto-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);transition:box-shadow .15s;}
+  .auto-card:hover{box-shadow:var(--shadow-md)}
+  .auto-card.active-auto{border-left:3px solid var(--green)}
+  .auto-card.paused-auto{border-left:3px solid var(--gray-200)}
+  .auto-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .auto-title{font-size:13.5px;font-weight:700;color:var(--gray-800)}
+  .auto-run{font-size:11px;color:var(--gray-400)}
+  .auto-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .auto-box{flex:1;min-width:120px;background:var(--white);border:1px solid var(--gray-200);border-radius:8px;padding:10px 12px;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:border-color .15s;}
+  .auto-box:hover{border-color:var(--blue-light)}
+  .auto-box.trigger-box{border-top:2px solid var(--blue)}
+  .auto-box.condition-box{border-top:2px solid var(--gold)}
+  .auto-box.action-box{border-top:2px solid var(--teal)}
+  .auto-box-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+  .auto-box-label.trigger{color:var(--blue)}
+  .auto-box-label.condition{color:var(--gold)}
+  .auto-box-label.action{color:var(--teal)}
+  .auto-box-text{font-size:12px;color:var(--gray-600)}
+  .auto-arrow{color:var(--gray-300);font-size:18px;flex-shrink:0}
+  .toggle{position:relative;width:40px;height:22px;background:var(--gray-200);border-radius:11px;cursor:pointer;transition:background .2s;flex-shrink:0;}
+  .toggle.on{background:var(--green)}
+  .toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;background:white;border-radius:50%;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+  .toggle.on::after{left:21px}
+
+  /* TASKS */
+  .task-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--gray-100);}
+  .task-item:last-child{border-bottom:none}
+  .task-check{width:18px;height:18px;border-radius:50%;border:2px solid var(--gray-300);flex-shrink:0;margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+  .task-check.done{background:var(--green);border-color:var(--green);color:white;font-size:10px}
+  .task-check:hover:not(.done){border-color:var(--blue)}
+  .task-name{font-size:13px;font-weight:500;color:var(--gray-700)}
+  .task-name.done{text-decoration:line-through;color:var(--gray-400)}
+  .task-meta{font-size:11px;color:var(--gray-400);margin-top:2px}
+  .task-meta.overdue{color:var(--red);font-weight:600}
+
+  /* ONBOARDING */
+  .onboard-step{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--gray-100);}
+  .onboard-step:last-child{border-bottom:none}
+  .step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px;}
+  .step-num.complete{background:var(--green);color:white}
+  .step-num.active{background:var(--blue);color:white}
+  .step-num.pending{background:var(--gray-100);color:var(--gray-400)}
+  .step-title{font-size:13.5px;font-weight:600;color:var(--gray-800);margin-bottom:3px}
+  .step-desc{font-size:12px;color:var(--gray-400)}
+
+  /* PROGRESS */
+  .progress-bar{height:6px;background:var(--gray-100);border-radius:3px;overflow:hidden;margin:8px 0}
+  .progress-fill{height:100%;border-radius:3px;background:var(--blue);transition:width .3s}
+
+  /* GRID LAYOUTS */
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .col-span-2{grid-column:span 2}
+
+  /* DETAIL PANEL */
+  .detail-header{background:linear-gradient(135deg,#0D1B2E 0%,#1E3A5F 50%,#0D4F47 100%);padding:28px;border-radius:var(--radius-lg) var(--radius-lg) 0 0;color:white;position:relative;overflow:hidden;}
+  .detail-header::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.04);pointer-events:none;}
+  .detail-name{font-size:20px;font-weight:700;margin-bottom:4px}
+  .detail-meta{font-size:13px;opacity:.6}
+  .detail-body{padding:20px}
+  .info-row{display:flex;gap:8px;margin-bottom:10px;font-size:13px}
+  .info-label{color:var(--gray-400);font-weight:500;width:130px;flex-shrink:0}
+  .info-value{color:var(--gray-700);font-weight:500}
+  .activity-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray-100);font-size:12.5px;}
+  .activity-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:4px}
+  .activity-time{color:var(--gray-400);font-size:11px;margin-top:2px}
+
+  /* MODAL */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;}
+  .modal{background:var(--white);border-radius:var(--radius-lg);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-md);}
+  .modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;}
+  .modal-title{font-size:16px;font-weight:700;color:var(--gray-800)}
+  .modal-close{background:var(--gray-100);border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:14px}
+  .modal-body{padding:20px 24px}
+  .modal-footer{padding:16px 24px;border-top:1px solid var(--gray-200);display:flex;gap:10px;justify-content:flex-end}
+
+  /* FORM */
+  .form-group{margin-bottom:16px}
+  .form-label{display:block;font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:6px}
+  .form-input{width:100%;padding:8px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;color:var(--gray-700);transition:border .15s;background:var(--white);}
+  .form-input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .form-select{width:100%;padding:8px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;color:var(--gray-700);background:var(--white);}
+  .form-select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+  .form-textarea{width:100%;padding:8px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;color:var(--gray-700);resize:vertical;min-height:80px}
+  .form-textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+
+  /* MISC */
+  .empty-state{text-align:center;padding:40px 20px;color:var(--gray-400)}
+  .empty-icon{font-size:36px;margin-bottom:12px}
+  .empty-text{font-size:14px}
+  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .section-title{font-size:15px;font-weight:700;color:var(--gray-800)}
+  .divider{height:1px;background:var(--gray-100);margin:16px 0}
+  .flex{display:flex}.items-center{align-items:center}.gap-8{gap:8px}.gap-12{gap:12px}.gap-16{gap:16px}
+  .ml-auto{margin-left:auto}.mt-4{margin-top:4px}.mt-8{margin-top:8px}.mt-16{margin-top:16px}.mb-16{margin-bottom:16px}
+  .text-sm{font-size:12px}.text-xs{font-size:11px}.text-gray{color:var(--gray-400)}.fw-600{font-weight:600}
+  .tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;background:var(--gray-100);color:var(--gray-500)}
+
+  /* WELCOME BANNER */
+  .welcome-banner{
+    background:linear-gradient(135deg,#0D1B2E 0%,#1A3A6B 40%,#0D5F57 80%,#0A7A6E 100%);
+    border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:24px;
+    display:flex;align-items:center;justify-content:space-between;
+    box-shadow:0 4px 20px rgba(15,28,46,.25);
+  }
+  .welcome-left h2{font-size:18px;font-weight:700;color:white;margin-bottom:4px;letter-spacing:-.3px}
+  .welcome-left p{font-size:13px;color:rgba(255,255,255,.65);max-width:520px;line-height:1.5}
+  .welcome-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .welcome-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;font-size:11px;font-weight:600;color:rgba(255,255,255,.85);}
+  .welcome-right{text-align:right;flex-shrink:0;margin-left:24px}
+  .welcome-right .big-stat{font-size:32px;font-weight:700;color:white;letter-spacing:-1.5px;line-height:1}
+  .welcome-right .big-label{font-size:11px;color:rgba(255,255,255,.5);margin-top:4px;font-weight:500}
+
+  /* ── MODULE CARDS (Phase 1 Navigation) ── */
+  .modules-section{margin-bottom:28px}
+  .modules-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .modules-section-title{font-size:15px;font-weight:700;color:var(--gray-800)}
+  .modules-section-sub{font-size:12px;color:var(--gray-400);margin-top:2px}
+  .modules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:900px){.modules-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.modules-grid{grid-template-columns:1fr}}
+
+  .module-card{
+    background:var(--white);border-radius:var(--radius-lg);
+    border:1px solid var(--gray-200);padding:20px;
+    box-shadow:var(--shadow);cursor:pointer;
+    transition:transform .18s cubic-bezier(.2,.8,.4,1),box-shadow .18s,border-color .18s;
+    text-decoration:none;display:block;position:relative;overflow:hidden;
+  }
+  .module-card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:3px;
+    transition:height .2s;
+  }
+  .module-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 8px 28px rgba(0,0,0,.12);
+    border-color:var(--gray-300);
+  }
+  .module-card:hover::before{height:4px}
+  .module-card.mod-blue::before{background:var(--blue)}
+  .module-card.mod-teal::before{background:var(--teal)}
+  .module-card.mod-gold::before{background:var(--gold)}
+  .module-card.mod-green::before{background:var(--green)}
+  .module-card.mod-purple::before{background:var(--purple)}
+  .module-card:hover.mod-blue{border-color:rgba(37,99,235,.3)}
+  .module-card:hover.mod-teal{border-color:rgba(13,148,136,.3)}
+  .module-card:hover.mod-gold{border-color:rgba(245,158,11,.3)}
+  .module-card:hover.mod-green{border-color:rgba(16,185,129,.3)}
+  .module-card:hover.mod-purple{border-color:rgba(124,58,237,.3)}
+
+  .module-icon-wrap{
+    width:44px;height:44px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;margin-bottom:14px;
+  }
+  .mod-blue .module-icon-wrap{background:var(--blue-pale)}
+  .mod-teal .module-icon-wrap{background:var(--teal-pale)}
+  .mod-gold .module-icon-wrap{background:var(--gold-pale)}
+  .mod-green .module-icon-wrap{background:var(--green-pale)}
+  .mod-purple .module-icon-wrap{background:var(--purple-pale)}
+
+  .module-card-title{font-size:14px;font-weight:700;color:var(--gray-800);margin-bottom:6px;letter-spacing:-.2px}
+  .module-card-desc{font-size:12.5px;color:var(--gray-500);line-height:1.55}
+  .module-card-arrow{
+    position:absolute;bottom:18px;right:18px;
+    font-size:16px;color:var(--gray-300);
+    transition:transform .18s,color .18s;
+  }
+  .module-card:hover .module-card-arrow{transform:translate(2px,-2px);color:var(--gray-500)}
+  .module-card-status{
+    display:inline-flex;align-items:center;gap:4px;
+    font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;
+    margin-top:10px;
+  }
+  .status-live{background:var(--green-pale);color:var(--green)}
+  .status-soon{background:var(--gray-100);color:var(--gray-400)}
+
+  /* PIPELINE TOTAL ROW */
+  .pipeline-total{background:var(--navy);color:white;border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-top:12px;font-size:13px;font-weight:600;}
+  .kanban-empty{padding:20px 8px;text-align:center;color:var(--gray-300);font-size:11px;border:1px dashed var(--gray-200);border-radius:6px;margin:4px;}
+  .section-divider{display:flex;align-items:center;gap:10px;margin:20px 0 16px;}
+  .section-divider span{font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:1px;white-space:nowrap}
+  .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:var(--gray-200)}
+
+  /* FOOTER CREDIT */
+  .portfolio-footer{position:fixed;bottom:0;right:0;padding:6px 14px;background:rgba(255,255,255,.95);border-top:1px solid var(--gray-200);border-left:1px solid var(--gray-200);border-radius:10px 0 0 0;font-size:11px;color:var(--gray-400);backdrop-filter:blur(8px);}
+  .portfolio-footer a{color:var(--blue);font-weight:600;text-decoration:none}
+  .portfolio-footer a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState, useEffect, useCallback} = React;
+
+// ── SAMPLE DATA ─────────────────────────────────────────────────────────────
+const STAGES = ['New Lead','Discovery','Qualified','Proposal','Review','Approval','Implementation','Closed Won'];
+const LOAN_TYPES = ['Advisory','Implementation','Managed Services','Renewal','Support','Onboarding'];
+const LEAD_SOURCES = ['Referral','Website','Outbound','Social Media','Repeat Client','Partner'];
+
+const INITIAL_CONTACTS = [
+  {id:1,name:'Sarah Chen',email:'sarah.chen@email.com',phone:'(404) 555-0192',address:'842 Peachtree St, Atlanta GA',loanAmount:385000,loanType:'Implementation',stage:'Implementation',creditScore:'Healthy',income:'$145,000',daysInStage:2,source:'Referral',notes:'Implementation kickoff confirmed. Stakeholders aligned and deliverables approved.',addedDate:'2026-03-01'},
+  {id:2,name:'Marcus & Diane Webb',email:'mwebb@email.com',phone:'(678) 555-0341',address:'211 Magnolia Dr, Decatur GA',loanAmount:520000,loanType:'Renewal',stage:'Review',creditScore:'Healthy',income:'$220,000',daysInStage:8,source:'Referral',notes:'Pricing validation pending. Follow up with finance contact.',addedDate:'2026-03-08'},
+  {id:3,name:'James Rivera',email:'jrivera@email.com',phone:'(770) 555-0876',address:'567 Oak Ave, Marietta GA',loanAmount:285000,loanType:'Implementation',stage:'Proposal',creditScore:'Watch',income:'$78,000',daysInStage:3,source:'Website',notes:'Needs support with final documentation and implementation timeline.',addedDate:'2026-03-15'},
+  {id:4,name:'Patricia Okonkwo',email:'pokonkwo@email.com',phone:'(404) 555-0223',address:'1901 Ponce de Leon, Atlanta GA',loanAmount:675000,loanType:'Advisory',stage:'Approval',creditScore:'Healthy',income:'$310,000',daysInStage:5,source:'Repeat Client',notes:'Expansion engagement. Second project with this client.',addedDate:'2026-03-10'},
+  {id:5,name:'Tyler & Amanda Brooks',email:'tbrooks@email.com',phone:'(678) 555-0554',address:'4423 Roswell Rd, Sandy Springs GA',loanAmount:445000,loanType:'Advisory',stage:'Qualified',creditScore:'Healthy',income:'$165,000',daysInStage:4,source:'Partner',notes:'Partner-introduced opportunity. Expected implementation in Q3.',addedDate:'2026-03-20'},
+  {id:6,name:'David Kim',email:'dkim@email.com',phone:'(770) 555-0789',address:'330 Buckhead Ave, Atlanta GA',loanAmount:295000,loanType:'Managed Services',stage:'Discovery',creditScore:'Healthy',income:'$95,000',daysInStage:2,source:'Referral',notes:'Discovery call completed. Strong fit for managed services engagement.',addedDate:'2026-03-28'},
+  {id:7,name:'Michelle Torres',email:'mtorres@email.com',phone:'(404) 555-0445',address:'88 Vinings Way, Smyrna GA',loanAmount:180000,loanType:'Support',stage:'Discovery',creditScore:'Watch',income:'$72,000',daysInStage:1,source:'Website',notes:'Looking to improve current support experience and response times.',addedDate:'2026-03-30'},
+  {id:8,name:'Robert & Lisa Hampton',email:'rhampton@email.com',phone:'(678) 555-0312',address:'2200 Lavista Rd, Tucker GA',loanAmount:365000,loanType:'Advisory',stage:'Review',creditScore:'At Risk',income:'$178,000',daysInStage:12,source:'Social Media',notes:'STALE — review delay caused by missing stakeholder approvals.',addedDate:'2026-03-05'},
+  {id:9,name:'Kevin Patel',email:'kpatel@email.com',phone:'(770) 555-0667',address:'951 Holcomb Bridge Rd, Roswell GA',loanAmount:598000,loanType:'Renewal',stage:'New Lead',creditScore:'Healthy',income:'$290,000',daysInStage:0,source:'Referral',notes:'New referral from Patricia Okonkwo.',addedDate:'2026-04-08'},
+  {id:10,name:'Angela Washington',email:'awash@email.com',phone:'(404) 555-0118',address:'741 Memorial Dr, Atlanta GA',loanAmount:225000,loanType:'Implementation',stage:'New Lead',creditScore:'Watch',income:'$62,000',daysInStage:0,source:'Website',notes:'Strong fit for onboarding-focused engagement.',addedDate:'2026-04-09'},
+  {id:11,name:'Chris & Megan Foster',email:'cfoster@email.com',phone:'(678) 555-0991',address:'160 Hammond Dr, Atlanta GA',loanAmount:495000,loanType:'Advisory',stage:'Proposal',creditScore:'Healthy',income:'$195,000',daysInStage:2,source:'Repeat Client',notes:'Third project with this client. Smooth process expected.',addedDate:'2026-03-22'},
+  {id:12,name:'Denise Nguyen',email:'dnguyen@email.com',phone:'(770) 555-0433',address:'3300 Camp Creek Pkwy, College Park GA',loanAmount:159000,loanType:'Onboarding',stage:'Qualified',creditScore:'Watch',income:'$58,000',daysInStage:6,source:'Outbound',notes:'Good onboarding fit. Budget approval pending.',addedDate:'2026-03-18'},
+  {id:13,name:'Brian Steele',email:'bsteele@email.com',phone:'(404) 555-0772',address:'425 Edgewood Ave, Atlanta GA',loanAmount:720000,loanType:'Renewal',stage:'Closed Won',creditScore:'Healthy',income:'$350,000',daysInStage:0,source:'Referral',notes:'Closed won. Schedule success review and referral request.',addedDate:'2026-02-10'},
+  {id:14,name:'Carmen Reyes',email:'creyes@email.com',phone:'(678) 555-0284',address:'7722 Tara Blvd, Jonesboro GA',loanAmount:241000,loanType:'Implementation',stage:'Closed Won',creditScore:'Healthy',income:'$68,000',daysInStage:0,source:'Website',notes:'Closed won last week. Positive client feedback received.',addedDate:'2026-02-18'},
+  {id:15,name:'Anthony Bell',email:'abell@email.com',phone:'(770) 555-0558',address:'9 Plantation Way, Alpharetta GA',loanAmount:835000,loanType:'Renewal',stage:'Approval',creditScore:'Healthy',income:'$420,000',daysInStage:3,source:'Referral',notes:'Large enterprise opportunity. Multiple approvals still pending.',addedDate:'2026-03-12'},
+];
+
+const INITIAL_TASKS = [
+  {id:1,contactId:8,title:'Follow up on stalled review — Robert Hampton',priority:'High',due:'2026-04-10',category:'Review Check',done:false},
+  {id:2,contactId:2,title:'Request pricing confirmation — Marcus Webb',priority:'High',due:'2026-04-10',category:'Approval Follow-Up',done:false},
+  {id:3,contactId:1,title:'Confirm implementation kickoff details — Sarah Chen',priority:'High',due:'2026-04-11',category:'Implementation Prep',done:false},
+  {id:4,contactId:9,title:'Schedule discovery call — Kevin Patel',priority:'Medium',due:'2026-04-12',category:'Follow Up',done:false},
+  {id:5,contactId:10,title:'Send onboarding checklist — Angela Washington',priority:'Medium',due:'2026-04-12',category:'Follow Up',done:false},
+  {id:6,contactId:4,title:'Review outstanding approvals — Patricia Okonkwo',priority:'High',due:'2026-04-11',category:'Approval Review',done:false},
+  {id:7,contactId:3,title:'Collect final scope notes — James Rivera',priority:'Medium',due:'2026-04-13',category:'Documentation',done:false},
+  {id:8,contactId:13,title:'Request referral and success quote — Brian Steele',priority:'Low',due:'2026-04-15',category:'Post-Close Follow Up',done:true},
+];
+
+const INITIAL_AUTOMATIONS = [
+  {id:1,on:true,name:'New Lead Welcome',trigger:'New contact added',condition:'Stage = New Lead',action:'Create follow-up task in 24 hrs',runs:23,lastRun:'Today'},
+  {id:2,on:true,name:'Stale Deal Alert',trigger:'Contact in stage 10+ days',condition:'Stage = Review / Proposal',action:'Flag at-risk account + create urgent task',runs:5,lastRun:'2 days ago'},
+  {id:3,on:true,name:'Proposal Submitted',trigger:'Stage moved to Proposal',condition:'All fields complete',action:'Create documentation checklist task',runs:18,lastRun:'Mar 22'},
+  {id:4,on:false,name:'Post-Close Referral',trigger:'Stage moved to Closed Won',condition:'Opportunity successfully closed',action:'Create referral follow-up task in 7 days',runs:12,lastRun:'Mar 10'},
+  {id:5,on:true,name:'Approval Checklist',trigger:'Stage moved to Approval',condition:'Approval notes not empty',action:'Create task per required item',runs:8,lastRun:'Apr 5'},
+];
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+const TODAY = new Date().toISOString().split('T')[0];
+const fmt$ = v => '$' + Number(v).toLocaleString();
+const daysBadge = d => {
+  if(d===0) return <span className="kc-days ok">New</span>;
+  if(d<=4) return <span className="kc-days ok">{d}d</span>;
+  if(d<=9) return <span className="kc-days warn">{d}d ⚠</span>;
+  return <span className="kc-days late">{d}d 🔴</span>;
+};
+const stageBadge = s => {
+  const map = {'New Lead':'badge-gray','Discovery':'badge-blue','Qualified':'badge-blue','Proposal':'badge-gold','Review':'badge-gold','Approval':'badge-teal','Implementation':'badge-teal','Closed Won':'badge-green'};
+  return <span className={`badge ${map[s]||'badge-gray'}`}><span className="badge-dot"/>{s}</span>;
+};
+const priorityBadge = p => {
+  const map = {High:'badge-red',Medium:'badge-gold',Low:'badge-gray'};
+  return <span className={`badge ${map[p]||'badge-gray'}`}>{p}</span>;
+};
+
+// ── MODULE CARDS (Phase 1) ────────────────────────────────────────────────────
+function ModuleCards() {
+  const modules = [
+    {
+      title:'Client & Pipeline Management',
+      desc:'Track clients, deals, and workflow stages from start to finish',
+      icon:'👥',color:'mod-blue',href:'client.html',live:true,
+    },
+    {
+      title:'Operations & Logistics',
+      desc:'Manage vendors, shipments, and operational execution',
+      icon:'🚚',color:'mod-teal',href:'operations.html',live:false,
+    },
+    {
+      title:'Performance & KPI Tracking',
+      desc:'Monitor employee performance, KPIs, and task completion',
+      icon:'📊',color:'mod-gold',href:'performance.html',live:false,
+    },
+    {
+      title:'Financial & Profit Analysis',
+      desc:'Analyze revenue, costs, and overall profitability',
+      icon:'💰',color:'mod-green',href:'financial.html',live:false,
+    },
+    {
+      title:'Advanced Decision Engine',
+      desc:'Compare scenarios, optimize costs, and support business decisions',
+      icon:'⚡',color:'mod-purple',href:'decision.html',live:false,
+    },
+  ];
+
+  return (
+    <div className="modules-section fade-up-1">
+      <div className="modules-section-header">
+        <div>
+          <div className="modules-section-title">Platform Modules</div>
+          <div className="modules-section-sub">Select a module to get started</div>
+        </div>
+        <span className="badge badge-blue">5 Modules</span>
+      </div>
+      <div className="modules-grid">
+        {modules.map((m,i) => (
+          <a key={i} className={`module-card ${m.color}`} href={m.href}>
+            <div className="module-icon-wrap">{m.icon}</div>
+            <div className="module-card-title">{m.title}</div>
+            <div className="module-card-desc">{m.desc}</div>
+            <div>
+              <span className={`module-card-status ${m.live ? 'status-live' : 'status-soon'}`}>
+                {m.live ? '● Live' : '○ Coming Soon'}
+              </span>
+            </div>
+            <span className="module-card-arrow">↗</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────────
+function Dashboard({contacts, tasks, onView}) {
+  const active = contacts.filter(c=>c.stage!=='Closed Won');
+  const closedWon = contacts.filter(c=>c.stage==='Closed Won');
+  const pipeline$ = active.reduce((s,c)=>s+c.loanAmount,0);
+  const overdue = tasks.filter(t=>!t.done && t.due <= TODAY).length;
+  const stale = contacts.filter(c=>c.daysInStage>=10).length;
+  const byStageCounts = STAGES.map(st=>({stage:st,count:contacts.filter(c=>c.stage===st).length}));
+
+  return (
+    <div>
+      {/* Suite Header Banner */}
+      <div className="welcome-banner">
+        <div className="welcome-left">
+          <h2>ClientFlow Operations Suite</h2>
+          <p>Manage workflows, monitor performance, and drive operational efficiency across your organization.</p>
+          <div className="welcome-badges">
+            <span className="welcome-badge">🏗️ 5 Platform Modules</span>
+            <span className="welcome-badge">📊 {STAGES.length} Pipeline Stages</span>
+            <span className="welcome-badge">⚡ 5 Automations</span>
+            <span className="welcome-badge">🔒 Audit Log Active</span>
+            <span className="welcome-badge">🧩 Built by Marcus Albright</span>
+          </div>
+        </div>
+        <div className="welcome-right">
+          <div className="big-stat">{fmt$(pipeline$)}</div>
+          <div className="big-label">Total Active Pipeline</div>
+        </div>
+      </div>
+
+      {/* Module Navigation Cards */}
+      <ModuleCards />
+
+      {/* Section divider */}
+      <div className="section-divider"><span>CRM Overview</span></div>
+
+      {/* Stats */}
+      <div className="stats-grid fade-up-2">
+        <div className="stat-card blue">
+          <div className="stat-icon">💰</div>
+          <div className="stat-label">Active Pipeline</div>
+          <div className="stat-value">{fmt$(pipeline$)}</div>
+          <div className="stat-change up">▲ 12% this month</div>
+        </div>
+        <div className="stat-card teal">
+          <div className="stat-icon">📋</div>
+          <div className="stat-label">Active Accounts</div>
+          <div className="stat-value">{active.length}</div>
+          <div className="stat-sub">{closedWon.length} closed this period</div>
+        </div>
+        <div className="stat-card gold">
+          <div className="stat-icon">⏰</div>
+          <div className="stat-label">Tasks Due Today</div>
+          <div className="stat-value">{overdue}</div>
+          <div className="stat-change down">▼ Needs attention</div>
+        </div>
+        <div className="stat-card green">
+          <div className="stat-icon">🏆</div>
+          <div className="stat-label">Closed Won This Period</div>
+          <div className="stat-value">{closedWon.length}</div>
+          <div className="stat-change up">▲ On track</div>
+        </div>
+      </div>
+
+      <div className="grid-2" style={{gap:20,marginBottom:20}}>
+        <div className="card">
+          <div className="card-header"><span className="card-title">Pipeline by Stage</span></div>
+          <div className="card-body">
+            {byStageCounts.filter(s=>s.count>0).map(s=>(
+              <div key={s.stage} style={{marginBottom:10}}>
+                <div className="flex items-center gap-8" style={{marginBottom:4}}>
+                  <span style={{fontSize:12,fontWeight:600,color:'var(--gray-600)',width:130}}>{s.stage}</span>
+                  <span style={{fontSize:12,fontWeight:700,color:'var(--gray-800)',marginLeft:'auto'}}>{s.count}</span>
+                </div>
+                <div className="progress-bar">
+                  <div className="progress-fill" style={{width:`${(s.count/contacts.length)*100}%`}}/>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-header"><span className="card-title">Urgent Items</span></div>
+          <div className="card-body">
+            {stale>0 && <div style={{background:'var(--red-pale)',border:'1px solid #fecaca',borderRadius:8,padding:'10px 12px',marginBottom:12}}>
+              <div style={{fontSize:13,fontWeight:700,color:'var(--red)'}}>🔴 {stale} Stale Deal{stale>1?'s':''}</div>
+              <div style={{fontSize:11,color:'var(--red)',marginTop:2}}>In stage 10+ days — needs immediate action</div>
+            </div>}
+            {tasks.filter(t=>!t.done).slice(0,4).map(t=>(
+              <div key={t.id} className="task-item">
+                <div className="task-check"/>
+                <div>
+                  <div className="task-name">{t.title}</div>
+                  <div className="task-meta">{t.category} · Due {t.due}</div>
+                </div>
+                {priorityBadge(t.priority)}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-header">
+          <span className="card-title">Open Opportunities</span>
+          <button className="btn btn-ghost btn-sm" onClick={()=>onView('contacts')}>View All →</button>
+        </div>
+        <div className="card-body" style={{padding:0}}>
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Client</th><th>Deal Value</th><th>Service Line</th><th>Stage</th><th>Days in Stage</th></tr>
+              </thead>
+              <tbody>
+                {contacts.filter(c=>c.stage!=='Closed Won').slice(0,6).map(c=>(
+                  <tr key={c.id} onClick={()=>onView('detail',c)} style={{cursor:'pointer'}}>
+                    <td className="td-name">{c.name}</td>
+                    <td className="td-amount">{fmt$(c.loanAmount)}</td>
+                    <td><span className="tag">{c.loanType}</span></td>
+                    <td>{stageBadge(c.stage)}</td>
+                    <td>{daysBadge(c.daysInStage)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Pipeline({contacts, onView}) {
+  return (
+    <div>
+      <div className="mb-16">
+        <p style={{fontSize:13,color:'var(--gray-400)'}}>🟢 On track (0–4 days) &nbsp;⚠️ Needs attention (5–9 days) &nbsp;🔴 At risk (10+ days)</p>
+      </div>
+      <div className="kanban">
+        {STAGES.map(stage=>{
+          const cards = contacts.filter(c=>c.stage===stage);
+          return (
+            <div key={stage} className="kanban-col">
+              <div className="kanban-col-header">
+                <span className="kanban-col-title">{stage}</span>
+                <span className="kanban-count">{cards.length}</span>
+              </div>
+              <div className="kanban-cards">
+                {cards.length===0 && <div className="kanban-empty">No accounts<br/>in this stage</div>}
+                {cards.map(c=>(
+                  <div key={c.id} className={`kanban-card ${c.daysInStage>=10?'stale':c.daysInStage>=5?'warning':''}`} onClick={()=>onView('detail',c)}>
+                    <div className="kc-name">{c.name}</div>
+                    <div className="kc-amount">{fmt$(c.loanAmount)}</div>
+                    <div className="kc-type">{c.loanType}</div>
+                    {daysBadge(c.daysInStage)}
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function Contacts({contacts, onView, onAdd}) {
+  const [search, setSearch] = useState('');
+  const [filterStage, setFilterStage] = useState('All');
+  const filtered = contacts.filter(c=>{
+    const matchS = filterStage==='All'||c.stage===filterStage;
+    const matchQ = !search||c.name.toLowerCase().includes(search.toLowerCase())||c.email.toLowerCase().includes(search.toLowerCase());
+    return matchS && matchQ;
+  });
+  return (
+    <div>
+      <div className="flex items-center gap-12 mb-16">
+        <input className="form-input" style={{maxWidth:240}} placeholder="🔍  Search contacts..." value={search} onChange={e=>setSearch(e.target.value)}/>
+        <select className="form-select" style={{maxWidth:180}} value={filterStage} onChange={e=>setFilterStage(e.target.value)}>
+          <option>All</option>
+          {STAGES.map(s=><option key={s}>{s}</option>)}
+        </select>
+        <button className="btn btn-primary ml-auto" onClick={onAdd}>+ Add Contact</button>
+      </div>
+      <div className="card">
+        <div className="table-wrap">
+          <table>
+            <thead><tr><th>Client</th><th>Deal Value</th><th>Service Line</th><th>Stage</th><th>Days in Stage</th><th>Source</th></tr></thead>
+            <tbody>
+              {filtered.map(c=>(
+                <tr key={c.id} onClick={()=>onView('detail',c)} style={{cursor:'pointer'}}>
+                  <td><div className="td-name">{c.name}</div><div style={{fontSize:11,color:'var(--gray-400)'}}>{c.email}</div></td>
+                  <td className="td-amount">{fmt$(c.loanAmount)}</td>
+                  <td><span className="tag">{c.loanType}</span></td>
+                  <td>{stageBadge(c.stage)}</td>
+                  <td>{daysBadge(c.daysInStage)}</td>
+                  <td style={{fontSize:12,color:'var(--gray-500)'}}>{c.source}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ContactDetail({contact, onBack, contacts, setContacts, tasks}) {
+  const myTasks = tasks.filter(t=>t.contactId===contact.id);
+  const onboardSteps = [
+    {title:'Initial Contact & Needs Assessment',desc:'Intro call completed, goals and requirements documented.',status:'complete'},
+    {title:'Discovery & Qualification',desc:'Initial qualification, fit review, and stakeholder alignment.',status:contact.stage==='New Lead'||contact.stage==='Discovery'?'pending':'complete'},
+    {title:'Proposal & Scope',desc:'Proposal submitted and scope documented.',status:['Proposal','Review','Approval','Implementation','Closed Won'].includes(contact.stage)?'complete':['Qualified'].includes(contact.stage)?'active':'pending'},
+    {title:'Review & Approvals',desc:'Internal review completed and approvals tracked.',status:['Approval','Implementation','Closed Won'].includes(contact.stage)?'complete':contact.stage==='Review'?'active':'pending'},
+    {title:'Implementation Readiness',desc:'All required items completed and kickoff scheduled.',status:contact.stage==='Closed Won'?'complete':contact.stage==='Implementation'?'active':'pending'},
+    {title:'Close & Handoff',desc:'Opportunity closed and handoff completed.',status:contact.stage==='Closed Won'?'complete':'pending'},
+  ];
+  const completedSteps = onboardSteps.filter(s=>s.status==='complete').length;
+  const pct = Math.round((completedSteps/onboardSteps.length)*100);
+  const activities = [
+    {type:'STAGE_CHANGE',text:`Stage updated: Qualified → Proposal`,user:'Marcus Albright',time:'Mar 15, 2026 · 10:42 AM',icon:'🔄'},
+    {type:'DOCUMENT',text:`Documentation received — ${fmt$(contact.loanAmount)} ${contact.loanType} opportunity updated`,user:'System',time:'Mar 15, 2026 · 10:38 AM',icon:'📄'},
+    {type:'VERIFICATION',text:'Qualification completed — requirements reviewed and account health updated',user:'Marcus Albright',time:'Mar 12, 2026 · 2:15 PM',icon:'✅'},
+    {type:'CALL',text:'Consultation call logged — 35 minutes — needs assessment documented',user:'Marcus Albright',time:'Mar 10, 2026 · 11:00 AM',icon:'📞'},
+    {type:'CREATED',text:'Contact record created — source: '+contact.source,user:'System',time:contact.addedDate+' · 9:00 AM',icon:'➕'},
+  ];
+  return (
+    <div>
+      <button className="btn btn-ghost btn-sm mb-16" onClick={onBack}>← Back</button>
+      <div className="card" style={{overflow:'hidden'}}>
+        <div className="detail-header">
+          <div className="flex items-center gap-12">
+            <div style={{width:48,height:48,borderRadius:'50%',background:'rgba(255,255,255,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,fontWeight:700,color:'white'}}>{contact.name[0]}</div>
+            <div>
+              <div className="detail-name">{contact.name}</div>
+              <div className="detail-meta">{contact.email} · {contact.phone}</div>
+            </div>
+            <div className="ml-auto">{stageBadge(contact.stage)}</div>
+          </div>
+          <div className="flex gap-16 mt-16" style={{flexWrap:'wrap'}}>
+            {[['Deal Value',fmt$(contact.loanAmount)],['Service Line',contact.loanType],['Account Health',contact.creditScore],['Annual Revenue',contact.income]].map(([l,v])=>(
+              <div key={l}>
+                <div style={{fontSize:10,opacity:.5,fontWeight:600,textTransform:'uppercase',letterSpacing:.8,marginBottom:2}}>{l}</div>
+                <div style={{fontSize:15,fontWeight:700,color:'white'}}>{v}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="detail-body">
+          <div className="grid-2">
+            <div>
+              <div className="section-title mb-16">Onboarding Progress</div>
+              <div className="flex items-center gap-8 mb-16">
+                <div className="progress-bar" style={{flex:1}}><div className="progress-fill" style={{width:`${pct}%`,background:`hsl(${pct*1.2},70%,45%)`}}/></div>
+                <span style={{fontSize:13,fontWeight:700,color:'var(--gray-600)'}}>{pct}%</span>
+              </div>
+              {onboardSteps.map((st,i)=>(
+                <div key={i} className="onboard-step">
+                  <div className={`step-num ${st.status}`}>{st.status==='complete'?'✓':i+1}</div>
+                  <div style={{flex:1}}>
+                    <div className="step-title">{st.title}</div>
+                    <div className="step-desc">{st.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div>
+              <div className="section-title mb-16">Tasks</div>
+              {myTasks.length===0?<div style={{fontSize:13,color:'var(--gray-400)'}}>No tasks assigned</div>:
+                myTasks.map(t=>(
+                  <div key={t.id} className="task-item">
+                    <div className={`task-check ${t.done?'done':''}`}>{t.done?'✓':''}</div>
+                    <div>
+                      <div className={`task-name ${t.done?'done':''}`}>{t.title}</div>
+                      <div className={`task-meta ${t.due<'2026-04-11'&&!t.done?'overdue':''}`}>{t.category} · Due {t.due}</div>
+                    </div>
+                    {priorityBadge(t.priority)}
+                  </div>
+                ))
+              }
+              <div className="divider"/>
+              <div className="section-title mb-16">Activity History</div>
+              {activities.map((a,i)=>(
+                <div key={i} className="activity-item">
+                  <div style={{fontSize:14,flexShrink:0,marginTop:1}}>{a.icon}</div>
+                  <div style={{flex:1}}>
+                    <div style={{color:'var(--gray-700)',fontSize:12.5}}>{a.text}</div>
+                    <div className="activity-time">{a.user} · {a.time}</div>
+                  </div>
+                  <span style={{fontSize:9,fontWeight:700,color:'var(--gray-300)',letterSpacing:.5,flexShrink:0,textTransform:'uppercase'}}>{a.type}</span>
+                </div>
+              ))}
+              <div className="divider"/>
+              <div className="section-title mb-16">Notes</div>
+              <div style={{background:'var(--gray-50)',borderRadius:8,padding:'12px 14px',fontSize:13,color:'var(--gray-600)'}}>{contact.notes||'No notes yet.'}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Tasks({tasks, setTasks, contacts}) {
+  const [filter, setFilter] = useState('All');
+  const toggle = id => setTasks(prev=>prev.map(t=>t.id===id?{...t,done:!t.done}:t));
+  const filtered = tasks.filter(t=>{
+    if(filter==='Active') return !t.done;
+    if(filter==='Done') return t.done;
+    if(filter==='Overdue') return !t.done && t.due<'2026-04-11';
+    return true;
+  });
+  const getContactName = id => (contacts.find(c=>c.id===id)||{}).name||'—';
+  return (
+    <div>
+      <div className="flex items-center gap-8 mb-16">
+        {['All','Active','Overdue','Done'].map(f=>(
+          <button key={f} className={`btn ${filter===f?'btn-primary':'btn-ghost'} btn-sm`} onClick={()=>setFilter(f)}>{f}</button>
+        ))}
+        <span style={{marginLeft:'auto',fontSize:12,color:'var(--gray-400)'}}>{tasks.filter(t=>!t.done).length} open · {tasks.filter(t=>t.done).length} completed</span>
+      </div>
+      <div className="card">
+        <div className="card-body">
+          {filtered.length===0?<div className="empty-state"><div className="empty-icon">✅</div><div className="empty-text">No tasks here</div></div>:
+          filtered.map(t=>(
+            <div key={t.id} className="task-item">
+              <div className={`task-check ${t.done?'done':''}`} onClick={()=>toggle(t.id)}>{t.done?'✓':''}</div>
+              <div style={{flex:1}}>
+                <div className={`task-name ${t.done?'done':''}`}>{t.title}</div>
+                <div className={`task-meta ${t.due<'2026-04-11'&&!t.done?'overdue':''}`}>{t.category} · {getContactName(t.contactId)} · Due {t.due}</div>
+              </div>
+              {priorityBadge(t.priority)}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Automations({automations, setAutomations}) {
+  const toggle = id => setAutomations(prev=>prev.map(a=>a.id===id?{...a,on:!a.on}:a));
+  return (
+    <div>
+      <div className="card" style={{padding:'16px 20px',marginBottom:20,background:'var(--blue-pale)',borderColor:'var(--blue-light)'}}>
+        <div style={{fontSize:13,color:'var(--blue)',fontWeight:500}}>
+          <strong>⚡ Automation Engine</strong> — {automations.filter(a=>a.on).length} of {automations.length} automations active. Every automation event is logged to the Audit Log with timestamp, actor, and risk classification.
+        </div>
+      </div>
+      {automations.map(a=>(
+        <div key={a.id} className={`auto-card ${a.on?'active-auto':'paused-auto'}`}>
+          <div className="auto-header">
+            <div>
+              <div className="auto-title">{a.name}</div>
+              <div className="auto-run">Triggered {a.runs}× · Last: {a.lastRun}</div>
+            </div>
+            <div className="flex items-center gap-8">
+              <span style={{fontSize:12,color:a.on?'var(--green)':'var(--gray-400)',fontWeight:600}}>{a.on?'Active':'Paused'}</span>
+              <div className={`toggle ${a.on?'on':''}`} onClick={()=>toggle(a.id)}/>
+            </div>
+          </div>
+          <div className="auto-flow">
+            <div className="auto-box trigger-box"><div className="auto-box-label trigger">⚡ Trigger</div><div className="auto-box-text">{a.trigger}</div></div>
+            <div className="auto-arrow">→</div>
+            <div className="auto-box condition-box"><div className="auto-box-label condition">◆ Condition</div><div className="auto-box-text">{a.condition}</div></div>
+            <div className="auto-arrow">→</div>
+            <div className="auto-box action-box"><div className="auto-box-label action">✓ Action</div><div className="auto-box-text">{a.action}</div></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Templates() {
+  const templates = [
+    {title:'Initial Lead Response',tag:'Lead',body:`Hi {FirstName},\n\nThank you for reaching out! I would love to learn more about your goals and see where our team can help.\n\nCan we schedule a quick 15-minute discovery call this week?\n\nBest regards,\nMarcus Albright`},
+    {title:'Qualification Follow-Up',tag:'Qualified',body:`Hi {FirstName},\n\nThanks again for the conversation. Based on what we discussed, you look like a strong fit for a {ServiceLine} engagement.\n\nTo move forward, I still need:\n• Primary business requirements\n• Current process notes\n• Key stakeholder contacts\n• Target timeline\n\nMarcus`},
+    {title:'Documentation Checklist',tag:'Proposal',body:`Hi {FirstName},\n\nYour opportunity is now in proposal stage. Here is what we still need:\n\n☐ Final scope confirmation\n☐ Stakeholder approval\n☐ Timeline alignment\n☐ Supporting documents\n\nThank you,\nMarcus`},
+    {title:'Approval Update',tag:'Approval',body:`Hi {FirstName},\n\nGood news — your opportunity is currently in approval review for {DealValue}.\n\nWe just need to finalize a few items before moving into implementation.\n\nMarcus`},
+    {title:'Implementation Ready',tag:'Implementation',body:`Hi {FirstName},\n\nYour project is ready for implementation. Kickoff is scheduled for {TargetDate}.\n\nLooking forward to getting started.\n\nMarcus Albright`},
+    {title:'Closed Won Thank You',tag:'Closed Won',body:`Hi {FirstName},\n\nThank you for partnering with us. It was a pleasure working with you.\n\nIf you know anyone who could benefit, I would appreciate the referral.\n\nMarcus`},
+  ];
+  const tagColors = {Lead:'badge-blue',Qualified:'badge-teal',Proposal:'badge-gold',Approval:'badge-teal',Implementation:'badge-green','Closed Won':'badge-green'};
+  return (
+    <div className="grid-2">
+      {templates.map((t,i)=>(
+        <div key={i} className="card">
+          <div className="card-header">
+            <div className="flex items-center gap-8">
+              <span className="card-title">{t.title}</span>
+              <span className={`badge ${tagColors[t.tag]}`}>{t.tag}</span>
+            </div>
+          </div>
+          <div className="card-body">
+            <pre style={{whiteSpace:'pre-wrap',fontFamily:'var(--font)',fontSize:12.5,color:'var(--gray-600)',lineHeight:1.65}}>{t.body}</pre>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Reports({contacts}) {
+  const byStage = STAGES.map(s=>({stage:s,count:contacts.filter(c=>c.stage===s).length,val:contacts.filter(c=>c.stage===s).reduce((a,c)=>a+c.loanAmount,0)}));
+  const bySource = LEAD_SOURCES.map(s=>({source:s,count:contacts.filter(c=>c.source===s).length})).filter(s=>s.count>0);
+  const maxCount = Math.max(...bySource.map(s=>s.count));
+  return (
+    <div>
+      <div className="grid-3">
+        {[['Total Pipeline',fmt$(contacts.filter(c=>c.stage!=='Closed Won').reduce((a,c)=>a+c.loanAmount,0))],['Avg Deal Size',fmt$(Math.round(contacts.reduce((a,c)=>a+c.loanAmount,0)/contacts.length))],['Total Contacts',contacts.length]].map(([l,v])=>(
+          <div key={l} className="card" style={{padding:'20px'}}>
+            <div style={{fontSize:11,fontWeight:600,color:'var(--gray-400)',textTransform:'uppercase',letterSpacing:.8,marginBottom:8}}>{l}</div>
+            <div style={{fontSize:24,fontWeight:700,color:'var(--gray-800)',letterSpacing:-1}}>{v}</div>
+          </div>
+        ))}
+      </div>
+      <div className="pipeline-total mt-16 mb-16"><span>📊 Total Portfolio Value (All Accounts)</span><span>{fmt$(contacts.reduce((a,c)=>a+c.loanAmount,0))}</span></div>
+      <div className="grid-2 mt-16">
+        <div className="card">
+          <div className="card-header"><span className="card-title">Pipeline Funnel</span></div>
+          <div className="card-body">
+            {byStage.filter(s=>s.count>0).map(s=>(
+              <div key={s.stage} style={{marginBottom:12}}>
+                <div className="flex items-center gap-8" style={{marginBottom:4}}>
+                  <span style={{fontSize:12,fontWeight:600,color:'var(--gray-600)',width:130,flexShrink:0}}>{s.stage}</span>
+                  <div style={{flex:1,height:20,background:'var(--gray-100)',borderRadius:4,overflow:'hidden'}}>
+                    <div style={{height:'100%',background:'var(--blue)',width:`${(s.count/contacts.length)*100}%`,borderRadius:4,display:'flex',alignItems:'center',paddingLeft:6}}>
+                      {s.count>0&&<span style={{fontSize:10,fontWeight:700,color:'white'}}>{s.count}</span>}
+                    </div>
+                  </div>
+                  <span style={{fontSize:11,fontWeight:700,color:'var(--gray-500)',width:60,textAlign:'right',flexShrink:0}}>{fmt$(s.val)}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="card">
+          <div className="card-header"><span className="card-title">Lead Sources</span></div>
+          <div className="card-body">
+            {bySource.map(s=>(
+              <div key={s.source} style={{marginBottom:10}}>
+                <div className="flex items-center gap-8" style={{marginBottom:4}}>
+                  <span style={{fontSize:12,fontWeight:600,color:'var(--gray-600)',width:110,flexShrink:0}}>{s.source}</span>
+                  <div style={{flex:1,height:16,background:'var(--gray-100)',borderRadius:4,overflow:'hidden'}}>
+                    <div style={{height:'100%',background:'var(--teal)',width:`${(s.count/maxCount)*100}%`,borderRadius:4}}/>
+                  </div>
+                  <span style={{fontSize:12,fontWeight:700,color:'var(--gray-600)',width:20,textAlign:'right',flexShrink:0}}>{s.count}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AuditLog({contacts, tasks}) {
+  const [filterType, setFilterType] = useState('All');
+  const LOG_TYPES = ['All','STAGE_CHANGE','DOCUMENT','AUTOMATION','TASK','SYSTEM','ACCESS'];
+  const logs = [
+    {id:1,type:'ACCESS',user:'Marcus Albright',action:'User session started — CRM accessed',target:'System',time:'Apr 10, 2026 · 9:02 AM',risk:'Low'},
+    {id:2,type:'STAGE_CHANGE',user:'Marcus Albright',action:'Stage updated: Proposal → Review',target:'Robert & Lisa Hampton',time:'Apr 9, 2026 · 4:45 PM',risk:'Low'},
+    {id:3,type:'AUTOMATION',user:'System',action:'Auto-trigger: Stale Deal Alert fired — 10+ days in Review',target:'Robert & Lisa Hampton',time:'Apr 9, 2026 · 4:45 PM',risk:'Medium'},
+    {id:4,type:'TASK',user:'System',action:'Task created: Follow up on stalled review — Priority: High',target:'Robert & Lisa Hampton',time:'Apr 9, 2026 · 4:45 PM',risk:'Low'},
+    {id:5,type:'DOCUMENT',user:'Marcus Albright',action:'Note added: pricing confirmation pending',target:'Marcus & Diane Webb',time:'Apr 9, 2026 · 2:10 PM',risk:'Low'},
+    {id:6,type:'STAGE_CHANGE',user:'Marcus Albright',action:'Stage updated: Approval → Implementation',target:'Sarah Chen',time:'Apr 8, 2026 · 11:30 AM',risk:'Low'},
+    {id:7,type:'AUTOMATION',user:'System',action:'Auto-trigger: New Lead Welcome — task created for Kevin Patel',target:'Kevin Patel',time:'Apr 8, 2026 · 9:00 AM',risk:'Low'},
+    {id:8,type:'SYSTEM',user:'System',action:'Contact record created — source: Referral',target:'Kevin Patel',time:'Apr 8, 2026 · 9:00 AM',risk:'Low'},
+    {id:9,type:'TASK',user:'Marcus Albright',action:'Task completed: Request referral and success quote — Brian Steele',target:'Brian Steele',time:'Apr 7, 2026 · 3:22 PM',risk:'Low'},
+    {id:10,type:'STAGE_CHANGE',user:'Marcus Albright',action:'Stage updated: Implementation → Closed Won',target:'Brian Steele',time:'Apr 1, 2026 · 10:00 AM',risk:'Low'},
+    {id:11,type:'AUTOMATION',user:'System',action:'Auto-trigger: post-close referral sequence initiated',target:'Brian Steele',time:'Apr 1, 2026 · 10:00 AM',risk:'Low'},
+    {id:12,type:'DOCUMENT',user:'Marcus Albright',action:'Email sent: Implementation readiness update',target:'Brian Steele',time:'Mar 31, 2026 · 2:00 PM',risk:'Low'},
+    {id:13,type:'ACCESS',user:'Marcus Albright',action:'Client record accessed — detail view opened',target:'Patricia Okonkwo',time:'Mar 30, 2026 · 4:10 PM',risk:'Low'},
+    {id:14,type:'AUTOMATION',user:'System',action:'Auto-trigger: Approval Checklist — 3 tasks generated',target:'Anthony Bell',time:'Mar 28, 2026 · 1:30 PM',risk:'Low'},
+    {id:15,type:'SYSTEM',user:'System',action:'Pipeline integrity check — no data anomalies detected',target:'All Records',time:'Mar 25, 2026 · 12:00 AM',risk:'Low'},
+    {id:16,type:'STAGE_CHANGE',user:'Marcus Albright',action:'Stage updated: Review → Approval',target:'Patricia Okonkwo',time:'Mar 22, 2026 · 9:45 AM',risk:'Low'},
+    {id:17,type:'DOCUMENT',user:'Marcus Albright',action:'Document request sent: pricing confirmation note',target:'Marcus & Diane Webb',time:'Mar 20, 2026 · 3:00 PM',risk:'Low'},
+    {id:18,type:'AUTOMATION',user:'System',action:'Auto-trigger: Proposal Submitted — checklist task created',target:'Chris & Megan Foster',time:'Mar 15, 2026 · 10:38 AM',risk:'Low'},
+    {id:19,type:'SYSTEM',user:'System',action:'Contact record created — source: Website',target:'James Rivera',time:'Mar 15, 2026 · 8:00 AM',risk:'Low'},
+    {id:20,type:'ACCESS',user:'Marcus Albright',action:'User session ended — 4h 22m active',target:'System',time:'Mar 14, 2026 · 5:30 PM',risk:'Low'},
+  ];
+  const riskColor = {Low:'badge-green',Medium:'badge-gold',High:'badge-red'};
+  const typeColor = {STAGE_CHANGE:'badge-blue',DOCUMENT:'badge-teal',AUTOMATION:'badge-gold',TASK:'badge-gray',SYSTEM:'badge-gray',ACCESS:'badge-blue'};
+  const typeIcon = {STAGE_CHANGE:'🔄',DOCUMENT:'📄',AUTOMATION:'⚡',TASK:'✅',SYSTEM:'⚙️',ACCESS:'🔑'};
+  const filtered = logs.filter(l=>filterType==='All'||l.type===filterType);
+  return (
+    <div>
+      <div style={{background:'var(--navy)',borderRadius:'var(--radius-lg)',padding:'16px 20px',marginBottom:20,display:'flex',alignItems:'center',gap:12}}>
+        <span style={{fontSize:20}}>🔒</span>
+        <div>
+          <div style={{fontSize:14,fontWeight:700,color:'white'}}>System Audit Log</div>
+          <div style={{fontSize:12,color:'rgba(255,255,255,.5)'}}>All system events logged with timestamp, actor, target, and risk classification.</div>
+        </div>
+        <div style={{marginLeft:'auto',textAlign:'right'}}>
+          <div style={{fontSize:20,fontWeight:800,color:'white',fontFamily:'var(--mono)'}}>{logs.length}</div>
+          <div style={{fontSize:10,color:'rgba(255,255,255,.4)',fontWeight:600}}>TOTAL EVENTS</div>
+        </div>
+      </div>
+      <div className="flex items-center gap-8 mb-16" style={{flexWrap:'wrap'}}>
+        {LOG_TYPES.map(t=>(<button key={t} className={`btn btn-sm ${filterType===t?'btn-primary':'btn-ghost'}`} onClick={()=>setFilterType(t)}>{t}</button>))}
+        <span style={{marginLeft:'auto',fontSize:11,color:'var(--gray-400)'}}>Showing {filtered.length} of {logs.length} events</span>
+      </div>
+      <div className="card">
+        <div className="table-wrap">
+          <table>
+            <thead><tr><th>Event Type</th><th>Action</th><th>Target</th><th>Actor</th><th>Timestamp</th><th>Risk</th></tr></thead>
+            <tbody>
+              {filtered.map(l=>(
+                <tr key={l.id}>
+                  <td><span className={`badge ${typeColor[l.type]||'badge-gray'}`}>{typeIcon[l.type]} {l.type}</span></td>
+                  <td style={{fontSize:12.5,color:'var(--gray-700)',maxWidth:300}}>{l.action}</td>
+                  <td style={{fontSize:12,color:'var(--gray-500)',fontWeight:500}}>{l.target}</td>
+                  <td style={{fontSize:12,color:'var(--gray-500)'}}>{l.user}</td>
+                  <td style={{fontSize:11,color:'var(--gray-400)',fontFamily:'var(--mono)',whiteSpace:'nowrap'}}>{l.time}</td>
+                  <td><span className={`badge ${riskColor[l.risk]||'badge-gray'}`}>{l.risk}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AddContactModal({onClose, onAdd}) {
+  const [form, setForm] = useState({name:'',email:'',phone:'',address:'',loanAmount:'',loanType:'Advisory',stage:'New Lead',creditScore:'700-719',income:'',source:'Website',notes:''});
+  const set = (k,v) => setForm(f=>({...f,[k]:v}));
+  const submit = () => {
+    if(!form.name||!form.loanAmount) return;
+    onAdd({...form,id:Date.now(),loanAmount:parseInt(form.loanAmount.replace(/\D/g,'')),daysInStage:0,addedDate:new Date().toISOString().split('T')[0]});
+    onClose();
+  };
+  return (
+    <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal">
+        <div className="modal-header">
+          <span className="modal-title">Add New Contact</span>
+          <button className="modal-close" onClick={onClose}>✕</button>
+        </div>
+        <div className="modal-body">
+          <div className="form-row">
+            <div className="form-group"><label className="form-label">Full Name *</label><input className="form-input" value={form.name} onChange={e=>set('name',e.target.value)} placeholder="John & Jane Smith"/></div>
+            <div className="form-group"><label className="form-label">Phone</label><input className="form-input" value={form.phone} onChange={e=>set('phone',e.target.value)} placeholder="(404) 555-0000"/></div>
+          </div>
+          <div className="form-group"><label className="form-label">Email</label><input className="form-input" value={form.email} onChange={e=>set('email',e.target.value)} placeholder="email@example.com"/></div>
+          <div className="form-row">
+            <div className="form-group"><label className="form-label">Deal Value *</label><input className="form-input" value={form.loanAmount} onChange={e=>set('loanAmount',e.target.value)} placeholder="350000"/></div>
+            <div className="form-group"><label className="form-label">Service Line</label><select className="form-select" value={form.loanType} onChange={e=>set('loanType',e.target.value)}>{LOAN_TYPES.map(t=><option key={t}>{t}</option>)}</select></div>
+          </div>
+          <div className="form-row">
+            <div className="form-group"><label className="form-label">Stage</label><select className="form-select" value={form.stage} onChange={e=>set('stage',e.target.value)}>{STAGES.map(s=><option key={s}>{s}</option>)}</select></div>
+            <div className="form-group"><label className="form-label">Lead Source</label><select className="form-select" value={form.source} onChange={e=>set('source',e.target.value)}>{LEAD_SOURCES.map(s=><option key={s}>{s}</option>)}</select></div>
+          </div>
+          <div className="form-row">
+            <div className="form-group"><label className="form-label">Account Health</label><select className="form-select" value={form.creditScore} onChange={e=>set('creditScore',e.target.value)}>{['580-619','620-639','640-659','660-679','680-699','700-719','720-739','740-759','760-779','780-799','800+'].map(s=><option key={s}>{s}</option>)}</select></div>
+            <div className="form-group"><label className="form-label">Annual Revenue</label><input className="form-input" value={form.income} onChange={e=>set('income',e.target.value)} placeholder="$95,000"/></div>
+          </div>
+          <div className="form-group"><label className="form-label">Notes</label><textarea className="form-textarea" value={form.notes} onChange={e=>set('notes',e.target.value)} placeholder="Initial notes about this contact or opportunity..."/></div>
+        </div>
+        <div className="modal-footer">
+          <button className="btn btn-ghost" onClick={onClose}>Cancel</button>
+          <button className="btn btn-primary" onClick={submit}>Add Contact</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── MAIN APP ──────────────────────────────────────────────────────────────────
+function App() {
+  const [view, setView] = useState('dashboard');
+  const [selectedContact, setSelectedContact] = useState(null);
+  const [contacts, setContacts] = useState(INITIAL_CONTACTS);
+  const [tasks, setTasks] = useState(INITIAL_TASKS);
+  const [automations, setAutomations] = useState(INITIAL_AUTOMATIONS);
+  const [showAddModal, setShowAddModal] = useState(false);
+
+  const navItems = [
+    {id:'dashboard',icon:'🏠',label:'Home'},
+    {id:'pipeline',icon:'🗂',label:'Pipeline'},
+    {id:'contacts',icon:'👥',label:'Contacts'},
+    {id:'tasks',icon:'✅',label:'Tasks',badge:tasks.filter(t=>!t.done&&t.due<='2026-04-11').length||null},
+    {id:'automations',icon:'⚡',label:'Automations'},
+    {id:'templates',icon:'📧',label:'Templates'},
+    {id:'reports',icon:'📈',label:'Reports'},
+    {id:'auditlog',icon:'🔒',label:'Audit Log'},
+  ];
+
+  const pageTitles = {
+    dashboard:'ClientFlow Operations Suite',
+    pipeline:'Pipeline View',contacts:'All Contacts',tasks:'Task Manager',
+    automations:'Automation Center',templates:'Workflow Templates',
+    reports:'Reports & Analytics',detail:'Client Detail',auditlog:'System Audit Log'
+  };
+
+  const pageSubs = {
+    dashboard:'Manage workflows, monitor performance, and drive operational efficiency across your organization.',
+    pipeline:`${contacts.length} total contacts across ${STAGES.length} stages`,
+    contacts:`${contacts.length} contacts`,
+    tasks:`${tasks.filter(t=>!t.done).length} open tasks`,
+    automations:`${automations.filter(a=>a.on).length} automations active`,
+    auditlog:'Full system event log — all actions timestamped and categorized',
+  };
+
+  const handleView = (v, contact=null) => {setView(v); if(contact) setSelectedContact(contact)};
+  const addContact = c => setContacts(prev=>[c,...prev]);
+
+  return (
+    <div className="app">
+      <div className="sidebar">
+        <div className="sidebar-brand">
+          <div className="brand-logo">
+            <div className="brand-icon">⚙️</div>
+            <div>
+              <div className="brand-name">ClientFlow</div>
+              <div className="brand-sub">Operations Suite</div>
+            </div>
+          </div>
+        </div>
+        <div className="sidebar-nav">
+          <div className="nav-section">
+            <div className="nav-label">Platform</div>
+            {navItems.map(item=>(
+              <div key={item.id} className={`nav-item ${view===item.id?'active':''}`} onClick={()=>setView(item.id)}>
+                <span className="nav-icon">{item.icon}</span>
+                <span>{item.label}</span>
+                {item.badge?<span className="nav-badge">{item.badge}</span>:null}
+              </div>
+            ))}
+          </div>
+          <div className="nav-section">
+            <div className="nav-label">Modules</div>
+            <a className="nav-item" href="client.html"><span className="nav-icon">👥</span><span>Client & Pipeline</span><span style={{marginLeft:'auto',fontSize:9,fontWeight:700,color:'var(--green)',background:'var(--green-pale)',padding:'1px 5px',borderRadius:6}}>LIVE</span></a>
+            <a className="nav-item" href="operations.html"><span className="nav-icon">🚚</span><span>Operations</span></a>
+            <a className="nav-item" href="performance.html"><span className="nav-icon">📊</span><span>Performance</span></a>
+            <a className="nav-item" href="financial.html"><span className="nav-icon">💰</span><span>Financial</span></a>
+            <a className="nav-item" href="decision.html"><span className="nav-icon">⚡</span><span>Decision Engine</span></a>
+          </div>
+        </div>
+        <div className="sidebar-footer">
+          <div className="user-card">
+            <div className="user-avatar">MA</div>
+            <div>
+              <div className="user-name">Marcus Albright</div>
+              <div className="user-nmls">Operations Suite</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="main">
+        <div className="topbar">
+          <div className="topbar-left">
+            <div>
+              <div className="page-title">{pageTitles[view]||'ClientFlow Operations Suite'}</div>
+              <div className="page-sub">{pageSubs[view]||''}</div>
+            </div>
+          </div>
+          <div className="topbar-right">
+            <div className="status-pill"><div className="status-dot-pulse"/>Live Demo</div>
+            <div className="topbar-divider"/>
+            {view==='contacts'&&<button className="btn btn-primary btn-sm" onClick={()=>setShowAddModal(true)}>+ Add Contact</button>}
+            {view==='pipeline'&&<button className="btn btn-ghost btn-sm">🔍 Filter</button>}
+          </div>
+        </div>
+
+        <div className="content">
+          {view==='dashboard' && <Dashboard contacts={contacts} tasks={tasks} onView={handleView}/>}
+          {view==='pipeline' && <Pipeline contacts={contacts} onView={handleView}/>}
+          {view==='contacts' && <Contacts contacts={contacts} onView={handleView} onAdd={()=>setShowAddModal(true)}/>}
+          {view==='tasks' && <Tasks tasks={tasks} setTasks={setTasks} contacts={contacts}/>}
+          {view==='automations' && <Automations automations={automations} setAutomations={setAutomations}/>}
+          {view==='templates' && <Templates/>}
+          {view==='reports' && <Reports contacts={contacts}/>}
+          {view==='auditlog' && <AuditLog contacts={contacts} tasks={tasks}/>}
+          {view==='detail' && selectedContact && <ContactDetail contact={selectedContact} onBack={()=>setView('contacts')} contacts={contacts} setContacts={setContacts} tasks={tasks}/>}
+        </div>
+      </div>
+
+      {showAddModal && <AddContactModal onClose={()=>setShowAddModal(false)} onAdd={addContact}/>}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+
+const footerDiv = document.createElement('div');
+footerDiv.className = 'portfolio-footer';
+footerDiv.innerHTML = 'Built by <a href="https://linkedin.com/in/marcus-a-69ab2989" target="_blank">Marcus Albright</a> &nbsp;·&nbsp; <a href="https://github.com/techByMarcus" target="_blank">GitHub</a> &nbsp;·&nbsp; ClientFlow Operations Suite';
+document.body.appendChild(footerDiv);
+</script>
+</body>
+</html>
