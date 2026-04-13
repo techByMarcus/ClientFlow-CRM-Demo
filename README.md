@@ -1,164 +1,107 @@
-# ClientFlow CRM Demo
+# 🚀 ClientFlow CRM Demo
 
-## 🚀 Live Demo
+A workflow-driven CRM system designed to simulate how organizations manage client onboarding, pipeline progression, and operational task tracking in a structured environment.
 
-👉 https://techbymarcus.github.io/ClientFlow-CRM-Demo
+---
+
+## 🔗 Live Demo
+
+👉 https://techbymarcus.github.io/ClientFlow-CRM-Demo/
 
 ---
 
 ## 📌 Overview
 
-ClientFlow CRM Demo is a workflow-driven system designed to simulate how organizations manage client onboarding, pipeline progression, and operational task tracking in a structured environment.
+ClientFlow CRM demonstrates how teams can:
 
-This project reflects over 20 years of real-world experience managing client workflows, follow-up systems, and pipeline execution — translated into a system-focused interface.
+- Manage client pipelines across multiple stages  
+- Track tasks and operational workflows  
+- Automate follow-ups and alerts  
+- Maintain visibility through reporting and audit logs  
 
----
-
-## 🖥️ System Preview
-
-### Dashboard Overview
-
-![Dashboard](dashboard.png)
-
-The dashboard provides real-time visibility into:
-
-* Total pipeline value and active accounts
-* Task urgency and follow-up requirements
-* Workflow stage distribution
-* Risk indicators such as stalled deals
+This project focuses on **operations efficiency, process visibility, and workflow automation**.
 
 ---
 
-### Pipeline Management
+## 🖥️ Screenshots
 
-![Pipeline](pipeline.png)
-
-Stage-based pipeline tracking:
-
-* Intake → Discovery → Qualified → Proposal → Review → Approval → Implementation → Closed
-* Visual identification of stalled or at-risk opportunities
-* Lifecycle tracking across all client engagements
+### 📊 Dashboard
+![Dashboard](images/Dashboard.png)
 
 ---
 
-### Contact & Data Management
-
-![Contacts](contacts.png)
-
-Structured data tracking including:
-
-* Client details and deal values
-* Stage progression
-* Source attribution
-* Time-in-stage indicators
+### 📈 Pipeline Management
+![Pipeline](images/images/Pipeline.png)
 
 ---
 
-### Task & Follow-Up Execution
-
-![Tasks](tasks.png)
-
-Operational execution layer:
-
-* Task prioritization (High / Medium / Low)
-* Follow-up tracking with deadlines
-* Overdue and in-progress visibility
-* Completion accountability
+### 🤖 Automation Engine
+![Automation](images/images/Automations.png)
 
 ---
 
-### Automation Engine
-
-![Automation](automation.png)
-
-Workflow automation logic:
-
-* Trigger → Condition → Action structure
-* Example:
-
-  * Trigger: Stage change
-  * Condition: Time in stage exceeds threshold
-  * Action: Create follow-up task / flag risk
+### 📋 Task Management
+![Tasks](images/images/Task Manager.png)
 
 ---
 
-### Reporting & Analytics
-
-![Reports](reports.png)
-
-Data visibility and performance tracking:
-
-* Pipeline funnel analysis
-* Lead source tracking
-* Deal value distribution
-* Operational insights for decision-making
+### 📊 Reports & Analytics
+![Reports](images/images/Reports.png)
 
 ---
 
-### Audit Log & System Visibility
-
-![Audit](audit.png)
-
-Audit-style tracking system:
-
-* Timestamped system activity
-* Action traceability (user + system)
-* Risk classification
-* Workflow accountability
+### 🔍 Audit Log (System Tracking)
+![Audit Log](images/images/AUDIT LOG.png)
 
 ---
 
-## 🧠 What This Project Demonstrates
-
-This project highlights real-world capabilities in:
-
-* CRM workflow design and structure
-* Pipeline lifecycle management
-* Task execution and follow-up systems
-* Operational visibility and accountability
-* Data tracking and reporting
-* Identifying workflow inefficiencies and risk
+### 👥 Contact Management
+![Contacts](images/images/Contacts.png)
 
 ---
 
-## 🔍 Operational Insight
+## ⚙️ Key Features
 
-The system is designed to surface:
-
-* Stalled opportunities requiring action
-* Overdue or high-priority tasks
-* Bottlenecks across pipeline stages
-* Activity gaps impacting completion
-
-This reflects a process-driven approach to maintaining consistency, visibility, and execution discipline.
+- Pipeline stage tracking (Lead → Close)
+- Task prioritization and deadline management
+- Automated workflow triggers
+- Real-time reporting dashboards
+- Audit logging for full system visibility
+- Contact and account management
 
 ---
 
-## 🛡️ Cyber-Relevant Concepts
+## 🧠 Operational Value
 
-While not a cybersecurity tool, this project demonstrates:
+This project demonstrates:
 
-* Audit logging and system monitoring
-* Event tracking and traceability
-* Risk identification based on behavior patterns
-* Structured, repeatable workflows
-
-These align with foundational principles in security operations and monitoring environments.
+- Process optimization through structured workflows  
+- Visibility into operational bottlenecks  
+- Use of automation to reduce manual follow-up  
+- Data-driven tracking of pipeline performance  
 
 ---
 
-## 🎯 Purpose
+## 🛠️ Tech Stack
 
-This project was built to translate real-world CRM and operational experience into a structured system.
-
-It demonstrates the ability to move beyond tool usage and into understanding how systems function, track activity, and support execution.
-
----
-
-## 🧾 Notes
-
-This is a portfolio demonstration project designed to showcase workflow design, CRM systems thinking, and operational execution — not a production CRM system.
+- HTML  
+- CSS  
+- JavaScript  
+- GitHub Pages (deployment)  
 
 ---
 
-**Built by Marcus Albright**
+## 📌 Use Case
+
+Designed as a **portfolio project** to showcase:
+
+- Operations management thinking  
+- Workflow design and automation logic  
+- CRM-style system architecture  
+- Data visibility and reporting  
+
+---
+
+## 👤 Author
+
+Marcus Albright  
