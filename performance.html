@@ -4,53 +4,558 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Performance & KPI Tracking — ClientFlow Operations Suite</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'DM Sans',sans-serif;background:#F8FAFC;color:#1E293B;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
-  .container{text-align:center;max-width:520px}
-  .suite-badge{display:inline-flex;align-items:center;gap:6px;background:#0F1C2E;color:white;font-size:11px;font-weight:700;padding:5px 12px;border-radius:20px;margin-bottom:28px;letter-spacing:.5px}
-  .icon-wrap{width:80px;height:80px;border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 20px;background:#F59E0B18;border:2px solid #F59E0B40}
-  .accent-bar{width:60px;height:4px;background:#F59E0B;border-radius:2px;margin:0 auto 20px}
-  h1{font-size:26px;font-weight:700;color:#0F1C2E;letter-spacing:-.5px;margin-bottom:12px}
-  p{font-size:15px;color:#64748B;line-height:1.6;margin-bottom:28px}
-  .status-card{background:white;border:1px solid #E2E8F0;border-radius:16px;padding:24px 28px;margin-bottom:28px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 6px 20px rgba(0,0,0,.04)}
-  .status-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #F1F5F9;font-size:13px}
-  .status-row:last-child{border-bottom:none}
-  .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-  .dot-green{background:#10B981}
-  .dot-gray{background:#CBD5E1}
-  .status-label{font-weight:600;color:#334155;flex:1;text-align:left}
-  .status-val{color:#94A3B8;font-size:12px}
-  .back-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;background:#0F1C2E;color:white;border-radius:10px;text-decoration:none;font-size:14px;font-weight:600;transition:opacity .15s}
-  .back-btn:hover{opacity:.82}
+  :root{
+    --navy:#0F1C2E;--navy-mid:#162237;--navy-light:#1E3050;
+    --blue:#2563EB;--blue-light:#3B82F6;--blue-pale:#EFF6FF;
+    --teal:#0D9488;--teal-light:#14B8A6;--teal-pale:#F0FDFA;
+    --gold:#F59E0B;--gold-pale:#FFFBEB;
+    --red:#EF4444;--red-pale:#FEF2F2;
+    --green:#10B981;--green-pale:#ECFDF5;
+    --orange:#F97316;--orange-pale:#FFF7ED;
+    --gray-50:#F8FAFC;--gray-100:#F1F5F9;--gray-200:#E2E8F0;
+    --gray-300:#CBD5E1;--gray-400:#94A3B8;--gray-500:#64748B;
+    --gray-600:#475569;--gray-700:#334155;--gray-800:#1E293B;
+    --white:#FFFFFF;
+    --font:'DM Sans',sans-serif;
+    --mono:'DM Mono',monospace;
+    --radius:10px;--radius-lg:16px;
+    --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06);
+    --shadow-md:0 4px 6px rgba(0,0,0,.07),0 10px 30px rgba(0,0,0,.1);
+  }
+  body{font-family:var(--font);background:var(--gray-50);color:var(--gray-800);min-height:100vh}
+  @keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+  .fade-up{animation:fadeInUp .35s ease both}
+  .fade-up-1{animation:fadeInUp .35s .05s ease both}
+  .fade-up-2{animation:fadeInUp .35s .10s ease both}
+  .fade-up-3{animation:fadeInUp .35s .15s ease both}
+  .fade-up-4{animation:fadeInUp .35s .20s ease both}
+  button{font-family:var(--font);cursor:pointer;border:none;outline:none}
+  ::-webkit-scrollbar{width:4px;height:4px}
+  ::-webkit-scrollbar-thumb{background:var(--gray-300);border-radius:2px}
+
+  .page{display:flex;flex-direction:column;min-height:100vh}
+
+  /* TOPBAR */
+  .topbar{background:var(--white);border-bottom:1px solid var(--gray-200);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 0 var(--gray-200);}
+  .topbar-left{display:flex;align-items:center;gap:14px}
+  .back-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:var(--gray-100);border-radius:8px;font-size:13px;font-weight:600;color:var(--gray-600);text-decoration:none;transition:all .15s;}
+  .back-btn:hover{background:var(--gray-200);color:var(--gray-800)}
+  .topbar-title{font-size:16px;font-weight:700;color:var(--gray-800);letter-spacing:-.3px}
+  .topbar-sub{font-size:12px;color:var(--gray-400)}
+  .topbar-right{display:flex;align-items:center;gap:10px}
+  .status-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--green-pale);border:1px solid #A7F3D0;border-radius:20px;font-size:11px;font-weight:700;color:var(--green);}
+  .pulse-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+  .module-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--gold-pale);border:1px solid #FDE68A;border-radius:20px;font-size:11px;font-weight:700;color:var(--gold);}
+
+  .content{flex:1;padding:24px 28px;max-width:1400px;width:100%;margin:0 auto}
+
+  /* HERO */
+  .hero{background:linear-gradient(135deg,#0D1B2E 0%,#1A3A6B 45%,#0D5F57 100%);border-radius:var(--radius-lg);padding:22px 28px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 20px rgba(15,28,46,.25);}
+  .hero-left h1{font-size:20px;font-weight:700;color:white;margin-bottom:4px;letter-spacing:-.4px}
+  .hero-left p{font-size:13px;color:rgba(255,255,255,.6);max-width:480px;line-height:1.5}
+  .hero-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .hero-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;font-size:11px;font-weight:600;color:rgba(255,255,255,.85);}
+  .hero-right{text-align:right;flex-shrink:0;margin-left:24px}
+  .hero-stat{font-size:34px;font-weight:800;color:white;letter-spacing:-2px;line-height:1;font-family:var(--mono)}
+  .hero-stat-label{font-size:11px;color:rgba(255,255,255,.45);margin-top:4px;font-weight:500}
+
+  /* STAT CARDS */
+  .stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px}
+  .stat-card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--gray-200);padding:16px 18px;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s;}
+  .stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+  .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+  .stat-card.blue::before{background:var(--blue)}
+  .stat-card.green::before{background:var(--green)}
+  .stat-card.gold::before{background:var(--gold)}
+  .stat-card.red::before{background:var(--red)}
+  .stat-card.orange::before{background:var(--orange)}
+  .stat-icon{font-size:18px;margin-bottom:8px}
+  .stat-label{font-size:10.5px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+  .stat-value{font-size:26px;font-weight:800;color:var(--gray-800);letter-spacing:-1px;line-height:1;font-family:var(--mono)}
+  .stat-sub{font-size:11px;color:var(--gray-400);margin-top:5px}
+
+  .section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .section-title{font-size:15px;font-weight:700;color:var(--gray-800)}
+  .section-sub{font-size:12px;color:var(--gray-400);margin-top:2px}
+
+  .filter-tabs{display:flex;gap:6px;flex-wrap:wrap}
+  .filter-btn{padding:5px 12px;border-radius:8px;font-size:12px;font-weight:600;background:var(--gray-100);color:var(--gray-500);border:1px solid transparent;transition:all .15s;cursor:pointer;}
+  .filter-btn.active{background:var(--navy);color:white}
+  .filter-btn:hover:not(.active){background:var(--gray-200)}
+
+  .card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--gray-200);box-shadow:var(--shadow)}
+
+  /* TABLE */
+  .table-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse}
+  thead th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--gray-200);background:var(--gray-50);white-space:nowrap;}
+  tbody td{padding:13px 14px;font-size:13px;border-bottom:1px solid var(--gray-100)}
+  tbody tr{transition:background .1s}
+  tbody tr:hover{background:var(--gray-50)}
+  tbody tr:last-child td{border-bottom:none}
+
+  /* BADGES */
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
+  .badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+  .badge-green{background:var(--green-pale);color:var(--green)}
+  .badge-gold{background:var(--gold-pale);color:var(--gold)}
+  .badge-red{background:var(--red-pale);color:var(--red)}
+  .badge-orange{background:var(--orange-pale);color:var(--orange)}
+  .badge-blue{background:var(--blue-pale);color:var(--blue)}
+  .badge-gray{background:var(--gray-100);color:var(--gray-500)}
+
+  /* SLA BAR */
+  .sla-wrap{display:flex;align-items:center;gap:10px;min-width:160px}
+  .sla-bar-bg{flex:1;height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden}
+  .sla-bar-fill{height:100%;border-radius:4px;transition:width .3s}
+  .sla-bar-fill.ok{background:var(--green)}
+  .sla-bar-fill.warn{background:var(--gold)}
+  .sla-bar-fill.risk{background:var(--orange)}
+  .sla-bar-fill.over{background:var(--red)}
+  .sla-time{font-size:11px;font-weight:700;font-family:var(--mono);white-space:nowrap}
+  .sla-time.ok{color:var(--green)}
+  .sla-time.warn{color:var(--gold)}
+  .sla-time.risk{color:var(--orange)}
+  .sla-time.over{color:var(--red)}
+
+  /* ALERT BANNERS */
+  .alert-banner{border-radius:var(--radius);padding:12px 16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px;border:1px solid;}
+  .alert-banner.alert-red{background:var(--red-pale);border-color:#FECACA}
+  .alert-banner.alert-orange{background:var(--orange-pale);border-color:#FED7AA}
+  .alert-banner-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+  .alert-banner-title{font-size:13px;font-weight:700;margin-bottom:2px}
+  .alert-banner.alert-red .alert-banner-title{color:var(--red)}
+  .alert-banner.alert-orange .alert-banner-title{color:var(--orange)}
+  .alert-banner-desc{font-size:12px;color:var(--gray-500)}
+  .alert-target{font-weight:600;color:var(--gray-700)}
+
+  /* REP CARDS */
+  .rep-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .rep-card{background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--gray-200);padding:18px;box-shadow:var(--shadow);transition:all .15s;}
+  .rep-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+  .rep-card-top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .rep-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;flex-shrink:0;}
+  .rep-name{font-size:14px;font-weight:700;color:var(--gray-800)}
+  .rep-role{font-size:11px;color:var(--gray-400);margin-top:1px}
+  .rep-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .rep-metric{background:var(--gray-50);border-radius:8px;padding:8px 10px}
+  .rep-metric-val{font-size:18px;font-weight:800;color:var(--gray-800);font-family:var(--mono);line-height:1}
+  .rep-metric-label{font-size:10px;color:var(--gray-400);font-weight:600;text-transform:uppercase;letter-spacing:.6px;margin-top:3px}
+  .progress-bar{height:5px;background:var(--gray-100);border-radius:3px;overflow:hidden}
+  .progress-fill{height:100%;border-radius:3px;transition:width .4s}
+
+  /* ESCALATION RULES PANEL */
+  .escalation-panel{background:linear-gradient(135deg,#1A0A0A 0%,#2D1515 100%);border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:24px;border:1px solid rgba(239,68,68,.2);}
+  .escalation-title{font-size:14px;font-weight:700;color:white;margin-bottom:4px}
+  .escalation-sub{font-size:12px;color:rgba(255,255,255,.45);margin-bottom:16px}
+  .escalation-rule{display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(255,255,255,.05);border-radius:8px;margin-bottom:8px;border-left:3px solid;}
+  .escalation-rule.rule-72{border-color:var(--orange)}
+  .escalation-rule.rule-96{border-color:var(--red)}
+  .escalation-rule-icon{font-size:16px;flex-shrink:0}
+  .escalation-rule-label{font-size:12px;font-weight:700;color:rgba(255,255,255,.9)}
+  .escalation-rule-desc{font-size:11px;color:rgba(255,255,255,.45);margin-top:1px}
+
+  /* MODAL */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+  .modal{background:var(--white);border-radius:var(--radius-lg);width:100%;max-width:480px;box-shadow:var(--shadow-md)}
+  .modal-header{padding:18px 22px 14px;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between}
+  .modal-title{font-size:15px;font-weight:700;color:var(--gray-800)}
+  .modal-close{background:var(--gray-100);border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:14px}
+  .modal-body{padding:18px 22px}
+  .modal-footer{padding:14px 22px;border-top:1px solid var(--gray-200);display:flex;gap:10px;justify-content:flex-end}
+  .form-group{margin-bottom:14px}
+  .form-label{display:block;font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:5px}
+  .form-input,.form-select{width:100%;padding:8px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;color:var(--gray-700);background:var(--white);font-family:var(--font)}
+  .form-input:focus,.form-select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;transition:all .15s;cursor:pointer}
+  .btn-primary{background:var(--blue);color:white;border:none}
+  .btn-primary:hover{background:var(--blue-light)}
+  .btn-ghost{background:transparent;color:var(--gray-600);border:1px solid var(--gray-200)}
+  .btn-ghost:hover{background:var(--gray-50)}
+  .btn-sm{padding:5px 10px;font-size:12px}
+  .btn-done{padding:4px 9px;font-size:11px;background:var(--red-pale);color:var(--red);border:none;border-radius:6px;font-weight:600;cursor:pointer}
+
+  .mb-16{margin-bottom:16px}.mb-24{margin-bottom:24px}
+  .flex{display:flex}.items-center{align-items:center}.gap-8{gap:8px}
+  .tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;background:var(--gray-100);color:var(--gray-500)}
+  .divider{height:1px;background:var(--gray-200);margin:12px 0}
+
+  .portfolio-footer{text-align:center;padding:14px;font-size:11px;color:var(--gray-400);border-top:1px solid var(--gray-200);background:var(--white);}
+  .portfolio-footer a{color:var(--blue);font-weight:600;text-decoration:none}
+
+  @media(max-width:900px){.stats-grid{grid-template-columns:repeat(3,1fr)}.rep-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.stats-grid{grid-template-columns:repeat(2,1fr)}.rep-grid{grid-template-columns:1fr}.hero{flex-direction:column;gap:16px}.hero-right{text-align:left;margin-left:0}}
 </style>
 </head>
 <body>
-<div class="container">
-  <div class="suite-badge">⚙️ ClientFlow Operations Suite</div>
-  <div class="icon-wrap">📊</div>
-  <div class="accent-bar"></div>
-  <h1>Performance & KPI Tracking</h1>
-  <p>Performance & KPI Tracking – Coming Soon. This module is currently in development and will be available in an upcoming release of the ClientFlow Operations Suite.</p>
-  <div class="status-card">
-    <div class="status-row">
-      <div class="dot dot-green"></div>
-      <span class="status-label">Core Dashboard &amp; Navigation</span>
-      <span class="status-val">Phase 1 · Complete</span>
+<div id="root"></div>
+<script type="text/babel">
+const {useState} = React;
+
+const REPS = [
+  {id:1, name:'Jordan Ellis',    role:'Senior Rep',  avatar:'JE', color:'#2563EB'},
+  {id:2, name:'Priya Sharma',    role:'Account Rep', avatar:'PS', color:'#0D9488'},
+  {id:3, name:'DeShawn Carter',  role:'Account Rep', avatar:'DC', color:'#7C3AED'},
+  {id:4, name:'Lauren Mitchell', role:'Junior Rep',  avatar:'LM', color:'#F59E0B'},
+  {id:5, name:'Carlos Vega',     role:'Senior Rep',  avatar:'CV', color:'#10B981'},
+];
+
+const hrs = h => h * 3600000;
+
+const INITIAL_TASKS = [
+  {id:1,  rep:1, file:'Sarah Chen — Implementation Kickoff',       category:'Implementation', assignedAgo:hrs(18),  priority:'High',   done:false},
+  {id:2,  rep:1, file:'Anthony Bell — Approval Review',             category:'Approval',       assignedAgo:hrs(71),  priority:'High',   done:false},
+  {id:3,  rep:2, file:'Patricia Okonkwo — Proposal Submission',     category:'Proposal',       assignedAgo:hrs(48),  priority:'Medium', done:false},
+  {id:4,  rep:2, file:'Kevin Patel — Discovery Call',               category:'Discovery',      assignedAgo:hrs(96),  priority:'High',   done:false},
+  {id:5,  rep:3, file:'Marcus & Diane Webb — Pricing Review',       category:'Review',         assignedAgo:hrs(82),  priority:'High',   done:false},
+  {id:6,  rep:3, file:'Robert Hampton — Stale Account Follow-Up',   category:'Follow-Up',      assignedAgo:hrs(110), priority:'High',   done:false},
+  {id:7,  rep:4, file:'James Rivera — Documentation Checklist',     category:'Documentation',  assignedAgo:hrs(24),  priority:'Medium', done:false},
+  {id:8,  rep:4, file:'Angela Washington — Onboarding Package',     category:'Onboarding',     assignedAgo:hrs(55),  priority:'Medium', done:false},
+  {id:9,  rep:5, file:'Tyler Brooks — Qualified Account Review',    category:'Qualified',      assignedAgo:hrs(12),  priority:'Low',    done:false},
+  {id:10, rep:5, file:'Carmen Reyes — Post-Close Follow-Up',        category:'Post-Close',     assignedAgo:hrs(36),  priority:'Low',    done:true},
+  {id:11, rep:1, file:'Brian Steele — Referral Request',            category:'Post-Close',     assignedAgo:hrs(8),   priority:'Low',    done:true},
+  {id:12, rep:3, file:'Denise Nguyen — Budget Qualification',       category:'Qualified',      assignedAgo:hrs(60),  priority:'Medium', done:false},
+];
+
+const SLA_LIMIT = hrs(72);
+
+function getStatus(t) {
+  if (t.done) return 'done';
+  if (t.assignedAgo >= hrs(96)) return 'over';
+  if (t.assignedAgo >= hrs(72)) return 'risk';
+  if (t.assignedAgo >= hrs(50)) return 'warn';
+  return 'ok';
+}
+
+function fmtHrs(ms) {
+  const h = Math.floor(ms / 3600000);
+  if (h < 24) return `${h}h`;
+  const d = Math.floor(h/24), r = h%24;
+  return r ? `${d}d ${r}h` : `${d}d`;
+}
+
+function StatusBadge({s}) {
+  const M = {ok:{c:'badge-green',l:'On Track'},warn:{c:'badge-gold',l:'Warning'},risk:{c:'badge-orange',l:'At Risk'},over:{c:'badge-red',l:'Overdue'},done:{c:'badge-gray',l:'Completed'}};
+  const {c,l} = M[s]||M.ok;
+  return <span className={`badge ${c}`}><span className="badge-dot"/>{l}</span>;
+}
+
+function SLABar({t}) {
+  if (t.done) return <span style={{fontSize:12,color:'var(--gray-300)',fontStyle:'italic'}}>Completed</span>;
+  const s = getStatus(t);
+  const pct = Math.min((t.assignedAgo/SLA_LIMIT)*100,100);
+  const over = t.assignedAgo >= SLA_LIMIT;
+  const label = over ? `+${fmtHrs(t.assignedAgo-SLA_LIMIT)} over` : `${fmtHrs(SLA_LIMIT-t.assignedAgo)} left`;
+  return (
+    <div className="sla-wrap">
+      <div className="sla-bar-bg"><div className={`sla-bar-fill ${s}`} style={{width:`${pct}%`}}/></div>
+      <span className={`sla-time ${s}`}>{label}</span>
     </div>
-    <div class="status-row">
-      <div class="dot dot-gray"></div>
-      <span class="status-label">Performance & KPI Tracking</span>
-      <span class="status-val">Planned · In Queue</span>
+  );
+}
+
+function ManagerStats({tasks}) {
+  const active = tasks.filter(t=>!t.done);
+  const done = tasks.filter(t=>t.done);
+  const onTrack = active.filter(t=>getStatus(t)==='ok');
+  const atRisk = active.filter(t=>['warn','risk'].includes(getStatus(t)));
+  const overdue = active.filter(t=>getStatus(t)==='over');
+  const escalated = active.filter(t=>t.assignedAgo>=SLA_LIMIT);
+  return (
+    <div className="stats-grid fade-up-1 mb-24">
+      <div className="stat-card blue"><div className="stat-icon">📋</div><div className="stat-label">Active Files</div><div className="stat-value">{active.length}</div><div className="stat-sub">{done.length} completed</div></div>
+      <div className="stat-card green"><div className="stat-icon">✅</div><div className="stat-label">On Track</div><div className="stat-value">{onTrack.length}</div><div className="stat-sub">Within SLA window</div></div>
+      <div className="stat-card gold"><div className="stat-icon">⚠️</div><div className="stat-label">At Risk</div><div className="stat-value">{atRisk.length}</div><div className="stat-sub">Needs attention</div></div>
+      <div className="stat-card red"><div className="stat-icon">🔴</div><div className="stat-label">Overdue</div><div className="stat-value">{overdue.length}</div><div className="stat-sub">Past 72-hr SLA</div></div>
+      <div className="stat-card orange"><div className="stat-icon">🚨</div><div className="stat-label">Escalated</div><div className="stat-value">{escalated.length}</div><div className="stat-sub">Rep or mgr alert</div></div>
     </div>
-    <div class="status-row">
-      <div class="dot dot-gray"></div>
-      <span class="status-label">API &amp; Automation Layer</span>
-      <span class="status-val">Future Phase</span>
+  );
+}
+
+function Escalations({tasks}) {
+  const getRep = id => REPS.find(r=>r.id===id);
+  const mgr = tasks.filter(t=>!t.done && t.assignedAgo>=hrs(96));
+  const rep = tasks.filter(t=>!t.done && t.assignedAgo>=hrs(72) && t.assignedAgo<hrs(96));
+  if (!mgr.length && !rep.length) return null;
+  return (
+    <div className="mb-24 fade-up-2">
+      <div className="section-hdr mb-16">
+        <div><div className="section-title">🚨 Active Escalations</div><div className="section-sub">{mgr.length+rep.length} item{mgr.length+rep.length!==1?'s':''} requiring immediate attention</div></div>
+      </div>
+      {mgr.map(t=>(
+        <div key={t.id} className="alert-banner alert-red">
+          <div className="alert-banner-icon">🔴</div>
+          <div style={{flex:1}}>
+            <div className="alert-banner-title">Manager Escalation — 96+ Hours</div>
+            <div className="alert-banner-desc"><span className="alert-target">{t.file}</span> · Assigned to <span className="alert-target">{getRep(t.rep)?.name}</span> · {fmtHrs(t.assignedAgo)} elapsed. Manager review required immediately.</div>
+          </div>
+          <span className="badge badge-red" style={{flexShrink:0}}>ESCALATED</span>
+        </div>
+      ))}
+      {rep.map(t=>(
+        <div key={t.id} className="alert-banner alert-orange">
+          <div className="alert-banner-icon">⚠️</div>
+          <div style={{flex:1}}>
+            <div className="alert-banner-title">Rep Alert — 72-Hour SLA Reached</div>
+            <div className="alert-banner-desc"><span className="alert-target">{t.file}</span> · Assigned to <span className="alert-target">{getRep(t.rep)?.name}</span> · {fmtHrs(t.assignedAgo)} elapsed. Rep must action immediately.</div>
+          </div>
+          <span className="badge badge-orange" style={{flexShrink:0}}>REP ALERT</span>
+        </div>
+      ))}
     </div>
-  </div>
-  <a class="back-btn" href="index.html">← Back to Operations Suite</a>
-</div>
+  );
+}
+
+function EscalationRules() {
+  return (
+    <div className="escalation-panel fade-up-3 mb-24">
+      <div className="escalation-title">⚡ SLA Escalation Framework</div>
+      <div className="escalation-sub">Automated escalation logic — triggers fire at defined hour thresholds</div>
+      <div className="escalation-rule rule-72">
+        <div className="escalation-rule-icon">⚠️</div>
+        <div style={{flex:1}}>
+          <div className="escalation-rule-label">72-Hour Threshold → Rep Alert</div>
+          <div className="escalation-rule-desc">SLA window expires. Rep is notified and must action or document delay reason immediately.</div>
+        </div>
+        <span className="badge badge-orange" style={{flexShrink:0}}>TIER 1</span>
+      </div>
+      <div className="escalation-rule rule-96" style={{marginBottom:0}}>
+        <div className="escalation-rule-icon">🔴</div>
+        <div style={{flex:1}}>
+          <div className="escalation-rule-label">96-Hour Threshold → Manager Alert</div>
+          <div className="escalation-rule-desc">Task escalated to manager. Rep failed to resolve within 24hrs of initial alert. Immediate manager intervention required.</div>
+        </div>
+        <span className="badge badge-red" style={{flexShrink:0}}>TIER 2</span>
+      </div>
+    </div>
+  );
+}
+
+function TaskTable({tasks, filter, onComplete}) {
+  const getRep = id => REPS.find(r=>r.id===id);
+  const pColor = {High:'badge-red',Medium:'badge-gold',Low:'badge-gray'};
+
+  const filtered = tasks.filter(t=>{
+    if (filter==='active') return !t.done;
+    if (filter==='ontrack') return !t.done && getStatus(t)==='ok';
+    if (filter==='atrisk') return !t.done && ['warn','risk'].includes(getStatus(t));
+    if (filter==='overdue') return !t.done && getStatus(t)==='over';
+    if (filter==='done') return t.done;
+    return true;
+  });
+
+  return (
+    <div className="card mb-24">
+      <div className="table-wrap">
+        <table>
+          <thead>
+            <tr><th>File / Task</th><th>Assigned Rep</th><th>Category</th><th>Priority</th><th>Elapsed</th><th>SLA Status</th><th>Status</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            {filtered.length===0 && <tr><td colSpan="8" style={{textAlign:'center',padding:'32px',color:'var(--gray-400)',fontSize:13}}>No tasks in this view</td></tr>}
+            {filtered.map(t=>{
+              const rep = getRep(t.rep);
+              const s = getStatus(t);
+              return (
+                <tr key={t.id} style={{opacity:t.done?.55:1}}>
+                  <td style={{fontWeight:600,color:'var(--gray-800)',fontSize:13,maxWidth:260}}>{t.file}</td>
+                  <td>
+                    <div style={{display:'flex',alignItems:'center',gap:8}}>
+                      <div style={{width:28,height:28,borderRadius:'50%',background:rep?.color,display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,fontWeight:700,color:'white',flexShrink:0}}>{rep?.avatar}</div>
+                      <div>
+                        <div style={{fontSize:12.5,fontWeight:600,color:'var(--gray-700)'}}>{rep?.name}</div>
+                        <div style={{fontSize:10.5,color:'var(--gray-400)'}}>{rep?.role}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span className="tag">{t.category}</span></td>
+                  <td><span className={`badge ${pColor[t.priority]}`}>{t.priority}</span></td>
+                  <td><span style={{fontSize:12,fontWeight:700,fontFamily:'var(--mono)',color:t.done?'var(--gray-300)':t.assignedAgo>=hrs(96)?'var(--red)':t.assignedAgo>=hrs(72)?'var(--orange)':'var(--gray-600)'}}>{fmtHrs(t.assignedAgo)}</span></td>
+                  <td><SLABar t={t}/></td>
+                  <td><StatusBadge s={s}/></td>
+                  <td>{!t.done?<button className="btn-done" onClick={()=>onComplete(t.id)}>Mark Done</button>:<span style={{fontSize:11,color:'var(--gray-300)'}}>—</span>}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function RepSnapshot({tasks}) {
+  return (
+    <div className="mb-24 fade-up-4">
+      <div className="section-hdr mb-16">
+        <div><div className="section-title">Rep Performance Snapshot</div><div className="section-sub">Individual KPI overview across all assigned files</div></div>
+      </div>
+      <div className="rep-grid">
+        {REPS.map(rep=>{
+          const rt = tasks.filter(t=>t.rep===rep.id);
+          const active = rt.filter(t=>!t.done);
+          const done = rt.filter(t=>t.done);
+          const overdue = active.filter(t=>getStatus(t)==='over');
+          const onTrack = active.filter(t=>getStatus(t)==='ok');
+          const slaRate = active.length>0?Math.round((onTrack.length/active.length)*100):100;
+          const compRate = rt.length>0?Math.round((done.length/rt.length)*100):0;
+          const dotColor = overdue.length>0?'var(--red)':active.length>0&&onTrack.length<active.length?'var(--gold)':'var(--green)';
+          return (
+            <div key={rep.id} className="rep-card">
+              <div className="rep-card-top">
+                <div className="rep-avatar" style={{background:rep.color}}>{rep.avatar}</div>
+                <div style={{flex:1}}>
+                  <div className="rep-name">{rep.name}</div>
+                  <div className="rep-role">{rep.role}</div>
+                </div>
+                <div style={{width:10,height:10,borderRadius:'50%',background:dotColor}}/>
+              </div>
+              <div className="rep-metrics">
+                <div className="rep-metric"><div className="rep-metric-val">{active.length}</div><div className="rep-metric-label">Active</div></div>
+                <div className="rep-metric"><div className="rep-metric-val" style={{color:overdue.length>0?'var(--red)':'var(--gray-800)'}}>{overdue.length}</div><div className="rep-metric-label">Overdue</div></div>
+                <div className="rep-metric"><div className="rep-metric-val" style={{color:'var(--green)'}}>{done.length}</div><div className="rep-metric-label">Done</div></div>
+                <div className="rep-metric"><div className="rep-metric-val">{rt.length}</div><div className="rep-metric-label">Total</div></div>
+              </div>
+              <div style={{marginTop:12}}>
+                <div style={{display:'flex',justifyContent:'space-between',fontSize:11,marginBottom:4}}>
+                  <span style={{color:'var(--gray-500)'}}>SLA Compliance</span>
+                  <span style={{fontWeight:700,color:slaRate>=75?'var(--green)':slaRate>=50?'var(--gold)':'var(--red)'}}>{slaRate}%</span>
+                </div>
+                <div className="progress-bar"><div className="progress-fill" style={{width:`${slaRate}%`,background:slaRate>=75?'var(--green)':slaRate>=50?'var(--gold)':'var(--red)'}}/></div>
+              </div>
+              <div style={{marginTop:8}}>
+                <div style={{display:'flex',justifyContent:'space-between',fontSize:11,marginBottom:4}}>
+                  <span style={{color:'var(--gray-500)'}}>Completion Rate</span>
+                  <span style={{fontWeight:700,color:'var(--gray-700)'}}>{compRate}%</span>
+                </div>
+                <div className="progress-bar"><div className="progress-fill" style={{width:`${compRate}%`,background:'var(--blue)'}}/></div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function AddModal({onClose, onAdd}) {
+  const [f, setF] = useState({rep:'1',file:'',category:'Review',priority:'Medium',hoursAgo:'4'});
+  const set = (k,v) => setF(p=>({...p,[k]:v}));
+  const submit = () => {
+    if (!f.file) return;
+    onAdd({id:Date.now(),rep:parseInt(f.rep),file:f.file,category:f.category,priority:f.priority,assignedAgo:hrs(parseFloat(f.hoursAgo)||0),done:false});
+    onClose();
+  };
+  return (
+    <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal">
+        <div className="modal-header"><span className="modal-title">Assign New File / Task</span><button className="modal-close" onClick={onClose}>✕</button></div>
+        <div className="modal-body">
+          <div className="form-group"><label className="form-label">File / Task Name *</label><input className="form-input" value={f.file} onChange={e=>set('file',e.target.value)} placeholder="e.g. John Smith — Discovery Call"/></div>
+          <div className="form-row">
+            <div className="form-group"><label className="form-label">Assign To</label><select className="form-select" value={f.rep} onChange={e=>set('rep',e.target.value)}>{REPS.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select></div>
+            <div className="form-group"><label className="form-label">Category</label><select className="form-select" value={f.category} onChange={e=>set('category',e.target.value)}>{['Review','Approval','Proposal','Discovery','Implementation','Follow-Up','Documentation','Onboarding','Post-Close','Qualified'].map(c=><option key={c}>{c}</option>)}</select></div>
+          </div>
+          <div className="form-row">
+            <div className="form-group"><label className="form-label">Priority</label><select className="form-select" value={f.priority} onChange={e=>set('priority',e.target.value)}><option>High</option><option>Medium</option><option>Low</option></select></div>
+            <div className="form-group"><label className="form-label">Hours Elapsed (demo)</label><input className="form-input" type="number" min="0" max="200" value={f.hoursAgo} onChange={e=>set('hoursAgo',e.target.value)}/></div>
+          </div>
+        </div>
+        <div className="modal-footer"><button className="btn btn-ghost" onClick={onClose}>Cancel</button><button className="btn btn-primary" onClick={submit}>Assign Task</button></div>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [tasks, setTasks] = useState(INITIAL_TASKS);
+  const [filter, setFilter] = useState('all');
+  const [showModal, setShowModal] = useState(false);
+
+  const complete = id => setTasks(p=>p.map(t=>t.id===id?{...t,done:true}:t));
+  const addTask = t => setTasks(p=>[t,...p]);
+
+  const active = tasks.filter(t=>!t.done);
+  const escalated = active.filter(t=>t.assignedAgo>=SLA_LIMIT);
+
+  const filters = [
+    {key:'all',label:'All Tasks'},{key:'active',label:'Active'},
+    {key:'ontrack',label:'On Track'},{key:'atrisk',label:'At Risk'},
+    {key:'overdue',label:'Overdue'},{key:'done',label:'Completed'},
+  ];
+
+  return (
+    <div className="page">
+      <div className="topbar">
+        <div className="topbar-left">
+          <a className="back-btn" href="index.html">← Suite Home</a>
+          <div style={{width:1,height:20,background:'var(--gray-200)'}}/>
+          <div>
+            <div className="topbar-title">Performance & KPI Tracking</div>
+            <div className="topbar-sub">72-hour SLA monitoring · Rep assignment · Escalation management</div>
+          </div>
+        </div>
+        <div className="topbar-right">
+          {escalated.length>0 && <span className="badge badge-red">🚨 {escalated.length} Escalated</span>}
+          <div className="module-badge">📊 Phase 2</div>
+          <div className="status-pill"><div className="pulse-dot"/>Live Demo</div>
+        </div>
+      </div>
+
+      <div className="content">
+        <div className="hero fade-up">
+          <div className="hero-left">
+            <h1>Sales Performance & KPI Dashboard</h1>
+            <p>Real-time visibility into rep performance, SLA compliance, and task escalation across all active files.</p>
+            <div className="hero-badges">
+              <span className="hero-badge">⏱️ 72-Hour SLA Tracking</span>
+              <span className="hero-badge">🚨 Auto Escalation Logic</span>
+              <span className="hero-badge">👥 {REPS.length} Reps Monitored</span>
+              <span className="hero-badge">📋 {tasks.length} Total Files</span>
+            </div>
+          </div>
+          <div className="hero-right">
+            <div className="hero-stat">{active.length}</div>
+            <div className="hero-stat-label">Active Files in Queue</div>
+          </div>
+        </div>
+
+        <ManagerStats tasks={tasks}/>
+        <Escalations tasks={tasks}/>
+        <EscalationRules/>
+
+        <div className="section-hdr mb-16 fade-up-3">
+          <div><div className="section-title">File & Task Assignment Board</div><div className="section-sub">All files with rep assignment, elapsed time, and SLA status</div></div>
+          <div style={{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap'}}>
+            <div className="filter-tabs">{filters.map(f=><button key={f.key} className={`filter-btn ${filter===f.key?'active':''}`} onClick={()=>setFilter(f.key)}>{f.label}</button>)}</div>
+            <button className="btn btn-primary btn-sm" onClick={()=>setShowModal(true)}>+ Assign File</button>
+          </div>
+        </div>
+
+        <TaskTable tasks={tasks} filter={filter} onComplete={complete}/>
+        <RepSnapshot tasks={tasks}/>
+      </div>
+
+      <div className="portfolio-footer">
+        Built by <a href="https://linkedin.com/in/marcus-a-69ab2989" target="_blank">Marcus Albright</a> &nbsp;·&nbsp;
+        <a href="https://github.com/techByMarcus" target="_blank">GitHub</a> &nbsp;·&nbsp;
+        ClientFlow Operations Suite — Phase 2
+      </div>
+
+      {showModal && <AddModal onClose={()=>setShowModal(false)} onAdd={addTask}/>}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
 </body>
 </html>
