@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ClientFlow CRM Demo — Workflow & Pipeline Management | Built by Marcus Albright</title>
+<title>ClientFlow Operations Suite — Multi-Module Platform | Built by Marcus Albright</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<meta name="description" content="ClientFlow CRM Demo — A professional workflow and pipeline management demo built by Marcus Albright demonstrating CRM design, operational visibility, and client onboarding expertise."/>
+<meta name="description" content="ClientFlow Operations Suite — A modular operations platform for workflow visibility, KPI tracking, and decision-making across sales, logistics, and finance. Built by Marcus Albright."/>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   :root{
@@ -18,6 +18,7 @@
     --gold:#F59E0B;--gold-pale:#FFFBEB;
     --red:#EF4444;--red-pale:#FEF2F2;
     --green:#10B981;--green-pale:#ECFDF5;
+    --purple:#7C3AED;--purple-pale:#F5F3FF;
     --gray-50:#F8FAFC;--gray-100:#F1F5F9;--gray-200:#E2E8F0;
     --gray-300:#CBD5E1;--gray-400:#94A3B8;--gray-500:#64748B;
     --gray-600:#475569;--gray-700:#334155;--gray-800:#1E293B;
@@ -67,8 +68,8 @@
     border-radius:10px;display:flex;align-items:center;justify-content:center;
     font-size:18px;box-shadow:0 2px 8px rgba(37,99,235,.35);
   }
-  .brand-name{font-size:16px;font-weight:700;color:var(--white);letter-spacing:-.3px}
-  .brand-sub{font-size:11px;color:rgba(255,255,255,.4);font-weight:400}
+  .brand-name{font-size:15px;font-weight:700;color:var(--white);letter-spacing:-.3px}
+  .brand-sub{font-size:10.5px;color:rgba(255,255,255,.4);font-weight:400}
   .sidebar-nav{flex:1;padding:12px 10px;overflow-y:auto}
   .nav-section{margin-bottom:20px}
   .nav-label{
@@ -79,6 +80,7 @@
     display:flex;align-items:center;gap:10px;padding:9px 10px;
     border-radius:8px;cursor:pointer;transition:all .15s;margin-bottom:2px;
     color:rgba(255,255,255,.55);font-size:13.5px;font-weight:500;
+    text-decoration:none;
   }
   .nav-item:hover{background:rgba(255,255,255,.07);color:var(--white)}
   .nav-item.active{background:var(--blue);color:var(--white);box-shadow:0 2px 8px rgba(37,99,235,.4)}
@@ -108,6 +110,7 @@
     background:var(--white);border-bottom:1px solid var(--gray-200);
     padding:0 24px;height:56px;display:flex;align-items:center;
     justify-content:space-between;flex-shrink:0;
+    box-shadow:0 1px 0 var(--gray-200);
   }
   .topbar-left{display:flex;align-items:center;gap:12px}
   .page-title{font-size:17px;font-weight:700;color:var(--gray-800);letter-spacing:-.3px}
@@ -124,21 +127,15 @@
   }
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
   .topbar-divider{width:1px;height:20px;background:var(--gray-200);margin:0 4px}
-  .search-box{
-    display:flex;align-items:center;gap:8px;background:var(--gray-50);
-    border:1px solid var(--gray-200);border-radius:8px;padding:6px 12px;
-    font-size:13px;color:var(--gray-400);width:200px;
-  }
   .btn{
     display:inline-flex;align-items:center;gap:6px;padding:7px 14px;
-    border-radius:8px;font-size:13px;font-weight:600;transition:all .15s;
+    border-radius:8px;font-size:13px;font-weight:600;transition:all .15s;cursor:pointer;
   }
-  .btn-primary{background:var(--blue);color:white}
+  .btn-primary{background:var(--blue);color:white;border:none}
   .btn-primary:hover{background:var(--blue-light)}
   .btn-ghost{background:transparent;color:var(--gray-600);border:1px solid var(--gray-200)}
   .btn-ghost:hover{background:var(--gray-50)}
   .btn-sm{padding:5px 10px;font-size:12px}
-  .btn-danger{background:var(--red-pale);color:var(--red)}
 
   .content{flex:1;overflow-y:auto;padding:24px 28px}
 
@@ -154,10 +151,10 @@
     background:var(--white);border-radius:var(--radius-lg);
     border:1px solid var(--gray-200);padding:18px 20px;
     box-shadow:var(--shadow);position:relative;overflow:hidden;
+    transition:transform .15s,box-shadow .15s;
   }
-  .stat-card::before{
-    content:'';position:absolute;top:0;left:0;right:0;height:3px;
-  }
+  .stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+  .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
   .stat-card.blue::before{background:var(--blue)}
   .stat-card.teal::before{background:var(--teal)}
   .stat-card.gold::before{background:var(--gold)}
@@ -168,27 +165,16 @@
   .stat-change{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:2px 6px;border-radius:4px;margin-top:6px}
   .stat-change.up{background:var(--green-pale);color:var(--green)}
   .stat-change.down{background:var(--red-pale);color:var(--red)}
+  .stat-icon{font-size:20px;margin-bottom:8px}
 
   /* PIPELINE KANBAN */
   .kanban{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px}
-  .kanban-col{
-    flex-shrink:0;width:200px;background:var(--gray-50);
-    border-radius:var(--radius);border:1px solid var(--gray-200);
-  }
-  .kanban-col-header{
-    padding:10px 12px;border-bottom:1px solid var(--gray-200);
-    display:flex;align-items:center;justify-content:space-between;
-  }
+  .kanban-col{flex-shrink:0;width:200px;background:var(--gray-50);border-radius:var(--radius);border:1px solid var(--gray-200);}
+  .kanban-col-header{padding:10px 12px;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;}
   .kanban-col-title{font-size:12px;font-weight:700;color:var(--gray-600)}
-  .kanban-count{
-    font-size:10px;font-weight:700;background:var(--gray-200);
-    color:var(--gray-500);padding:1px 6px;border-radius:10px;
-  }
+  .kanban-count{font-size:10px;font-weight:700;background:var(--gray-200);color:var(--gray-500);padding:1px 6px;border-radius:10px;}
   .kanban-cards{padding:8px;display:flex;flex-direction:column;gap:8px;min-height:80px}
-  .kanban-card{
-    background:var(--white);border-radius:8px;border:1px solid var(--gray-200);
-    padding:10px 12px;cursor:pointer;transition:all .15s;box-shadow:var(--shadow);
-  }
+  .kanban-card{background:var(--white);border-radius:8px;border:1px solid var(--gray-200);padding:10px 12px;cursor:pointer;transition:all .18s cubic-bezier(.2,.8,.4,1);box-shadow:var(--shadow);}
   .kanban-card:hover{border-color:var(--blue);box-shadow:0 2px 8px rgba(37,99,235,.15);transform:translateY(-1px)}
   .kanban-card.stale{border-left:3px solid var(--red)}
   .kanban-card.warning{border-left:3px solid var(--gold)}
@@ -203,13 +189,9 @@
   /* TABLE */
   .table-wrap{overflow-x:auto}
   table{width:100%;border-collapse:collapse}
-  thead th{
-    padding:11px 14px;text-align:left;font-size:10.5px;font-weight:700;
-    color:var(--gray-400);text-transform:uppercase;letter-spacing:1px;
-    border-bottom:2px solid var(--gray-200);background:var(--gray-50);
-    white-space:nowrap;
-  }
+  thead th{padding:11px 14px;text-align:left;font-size:10.5px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--gray-200);background:var(--gray-50);white-space:nowrap;}
   tbody td{padding:12px 14px;font-size:13px;border-bottom:1px solid var(--gray-100)}
+  tbody tr{transition:background .1s}
   tbody tr:hover{background:var(--gray-50)}
   tbody tr:last-child td{border-bottom:none}
   .td-name{font-weight:600;color:var(--gray-800)}
@@ -226,20 +208,15 @@
   .badge-dot{width:6px;height:6px;border-radius:50%;background:currentColor}
 
   /* AUTOMATION */
-  .auto-card{
-    background:var(--white);border:1px solid var(--gray-200);
-    border-radius:var(--radius);padding:16px;margin-bottom:12px;
-    box-shadow:var(--shadow);
-  }
+  .auto-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);transition:box-shadow .15s;}
+  .auto-card:hover{box-shadow:var(--shadow-md)}
+  .auto-card.active-auto{border-left:3px solid var(--green)}
+  .auto-card.paused-auto{border-left:3px solid var(--gray-200)}
   .auto-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
   .auto-title{font-size:13.5px;font-weight:700;color:var(--gray-800)}
   .auto-run{font-size:11px;color:var(--gray-400)}
   .auto-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-  .auto-box{
-    flex:1;min-width:120px;background:var(--white);border:1px solid var(--gray-200);
-    border-radius:8px;padding:10px 12px;box-shadow:0 1px 3px rgba(0,0,0,.04);
-    transition:border-color .15s;
-  }
+  .auto-box{flex:1;min-width:120px;background:var(--white);border:1px solid var(--gray-200);border-radius:8px;padding:10px 12px;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:border-color .15s;}
   .auto-box:hover{border-color:var(--blue-light)}
   .auto-box.trigger-box{border-top:2px solid var(--blue)}
   .auto-box.condition-box{border-top:2px solid var(--gold)}
@@ -250,29 +227,15 @@
   .auto-box-label.action{color:var(--teal)}
   .auto-box-text{font-size:12px;color:var(--gray-600)}
   .auto-arrow{color:var(--gray-300);font-size:18px;flex-shrink:0}
-  .toggle{
-    position:relative;width:40px;height:22px;background:var(--gray-200);
-    border-radius:11px;cursor:pointer;transition:background .2s;flex-shrink:0;
-  }
+  .toggle{position:relative;width:40px;height:22px;background:var(--gray-200);border-radius:11px;cursor:pointer;transition:background .2s;flex-shrink:0;}
   .toggle.on{background:var(--green)}
-  .toggle::after{
-    content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;
-    background:white;border-radius:50%;transition:left .2s;
-    box-shadow:0 1px 3px rgba(0,0,0,.2);
-  }
+  .toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;background:white;border-radius:50%;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
   .toggle.on::after{left:21px}
 
   /* TASKS */
-  .task-item{
-    display:flex;align-items:flex-start;gap:12px;padding:12px 0;
-    border-bottom:1px solid var(--gray-100);
-  }
+  .task-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--gray-100);}
   .task-item:last-child{border-bottom:none}
-  .task-check{
-    width:18px;height:18px;border-radius:50%;border:2px solid var(--gray-300);
-    flex-shrink:0;margin-top:2px;cursor:pointer;display:flex;align-items:center;
-    justify-content:center;transition:all .15s;
-  }
+  .task-check{width:18px;height:18px;border-radius:50%;border:2px solid var(--gray-300);flex-shrink:0;margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
   .task-check.done{background:var(--green);border-color:var(--green);color:white;font-size:10px}
   .task-check:hover:not(.done){border-color:var(--blue)}
   .task-name{font-size:13px;font-weight:500;color:var(--gray-700)}
@@ -281,20 +244,14 @@
   .task-meta.overdue{color:var(--red);font-weight:600}
 
   /* ONBOARDING */
-  .onboard-step{
-    display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--gray-100);
-  }
+  .onboard-step{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--gray-100);}
   .onboard-step:last-child{border-bottom:none}
-  .step-num{
-    width:28px;height:28px;border-radius:50%;display:flex;align-items:center;
-    justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px;
-  }
+  .step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px;}
   .step-num.complete{background:var(--green);color:white}
   .step-num.active{background:var(--blue);color:white}
   .step-num.pending{background:var(--gray-100);color:var(--gray-400)}
   .step-title{font-size:13.5px;font-weight:600;color:var(--gray-800);margin-bottom:3px}
   .step-desc{font-size:12px;color:var(--gray-400)}
-  .step-status{margin-left:auto;flex-shrink:0}
 
   /* PROGRESS */
   .progress-bar{height:6px;background:var(--gray-100);border-radius:3px;overflow:hidden;margin:8px 0}
@@ -306,42 +263,22 @@
   .col-span-2{grid-column:span 2}
 
   /* DETAIL PANEL */
-  .detail-header{
-    background:linear-gradient(135deg,#0D1B2E 0%,#1E3A5F 50%,#0D4F47 100%);
-    padding:28px;border-radius:var(--radius-lg) var(--radius-lg) 0 0;color:white;
-    position:relative;overflow:hidden;
-  }
-  .detail-header::before{
-    content:'';position:absolute;top:-40px;right:-40px;
-    width:180px;height:180px;border-radius:50%;
-    background:rgba(255,255,255,.04);pointer-events:none;
-  }
+  .detail-header{background:linear-gradient(135deg,#0D1B2E 0%,#1E3A5F 50%,#0D4F47 100%);padding:28px;border-radius:var(--radius-lg) var(--radius-lg) 0 0;color:white;position:relative;overflow:hidden;}
+  .detail-header::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.04);pointer-events:none;}
   .detail-name{font-size:20px;font-weight:700;margin-bottom:4px}
   .detail-meta{font-size:13px;opacity:.6}
   .detail-body{padding:20px}
   .info-row{display:flex;gap:8px;margin-bottom:10px;font-size:13px}
   .info-label{color:var(--gray-400);font-weight:500;width:130px;flex-shrink:0}
   .info-value{color:var(--gray-700);font-weight:500}
-  .activity-item{
-    display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray-100);
-    font-size:12.5px;
-  }
+  .activity-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray-100);font-size:12.5px;}
   .activity-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:4px}
   .activity-time{color:var(--gray-400);font-size:11px;margin-top:2px}
 
   /* MODAL */
-  .modal-overlay{
-    position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;
-    align-items:center;justify-content:center;z-index:1000;padding:20px;
-  }
-  .modal{
-    background:var(--white);border-radius:var(--radius-lg);width:100%;max-width:520px;
-    max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-md);
-  }
-  .modal-header{
-    padding:20px 24px 16px;border-bottom:1px solid var(--gray-200);
-    display:flex;align-items:center;justify-content:space-between;
-  }
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;}
+  .modal{background:var(--white);border-radius:var(--radius-lg);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-md);}
+  .modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;}
   .modal-title{font-size:16px;font-weight:700;color:var(--gray-800)}
   .modal-close{background:var(--gray-100);border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:14px}
   .modal-body{padding:20px 24px}
@@ -350,17 +287,13 @@
   /* FORM */
   .form-group{margin-bottom:16px}
   .form-label{display:block;font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:6px}
-  .form-input{
-    width:100%;padding:8px 12px;border:1px solid var(--gray-200);border-radius:8px;
-    font-size:13px;color:var(--gray-700);transition:border .15s;background:var(--white);
-  }
+  .form-input{width:100%;padding:8px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;color:var(--gray-700);transition:border .15s;background:var(--white);}
   .form-input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
   .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .form-select{
-    width:100%;padding:8px 12px;border:1px solid var(--gray-200);border-radius:8px;
-    font-size:13px;color:var(--gray-700);background:var(--white);
-  }
+  .form-select{width:100%;padding:8px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;color:var(--gray-700);background:var(--white);}
+  .form-select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
   .form-textarea{width:100%;padding:8px 12px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;color:var(--gray-700);resize:vertical;min-height:80px}
+  .form-textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
 
   /* MISC */
   .empty-state{text-align:center;padding:40px 20px;color:var(--gray-400)}
@@ -384,78 +317,86 @@
   .welcome-left h2{font-size:18px;font-weight:700;color:white;margin-bottom:4px;letter-spacing:-.3px}
   .welcome-left p{font-size:13px;color:rgba(255,255,255,.65);max-width:520px;line-height:1.5}
   .welcome-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-  .welcome-badge{
-    display:inline-flex;align-items:center;gap:5px;padding:4px 10px;
-    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
-    border-radius:20px;font-size:11px;font-weight:600;color:rgba(255,255,255,.85);
-  }
+  .welcome-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;font-size:11px;font-weight:600;color:rgba(255,255,255,.85);}
   .welcome-right{text-align:right;flex-shrink:0;margin-left:24px}
   .welcome-right .big-stat{font-size:32px;font-weight:700;color:white;letter-spacing:-1.5px;line-height:1}
   .welcome-right .big-label{font-size:11px;color:rgba(255,255,255,.5);margin-top:4px;font-weight:500}
 
-  /* STAT CARD IMPROVEMENTS */
-  .stat-card{transition:transform .15s,box-shadow .15s}
-  .stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
-  .stat-icon{font-size:20px;margin-bottom:8px}
+  /* ── MODULE CARDS (Phase 1 Navigation) ── */
+  .modules-section{margin-bottom:28px}
+  .modules-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .modules-section-title{font-size:15px;font-weight:700;color:var(--gray-800)}
+  .modules-section-sub{font-size:12px;color:var(--gray-400);margin-top:2px}
+  .modules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:900px){.modules-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.modules-grid{grid-template-columns:1fr}}
 
-  /* KANBAN IMPROVEMENTS */
-  .kanban-col-header.funded{background:linear-gradient(to right,var(--green-pale),var(--white))}
-  .kanban-col-header.close{background:linear-gradient(to right,var(--teal-pale),var(--white))}
-
-  /* TOPBAR IMPROVEMENTS */
-  .topbar{box-shadow:0 1px 0 var(--gray-200)}
-  .page-breadcrumb{font-size:11px;color:var(--gray-300);margin-right:4px}
-
-  /* FOOTER CREDIT */
-  .portfolio-footer{
-    position:fixed;bottom:0;right:0;padding:6px 14px;
-    background:rgba(255,255,255,.95);border-top:1px solid var(--gray-200);
-    border-left:1px solid var(--gray-200);border-radius:10px 0 0 0;
-    font-size:11px;color:var(--gray-400);backdrop-filter:blur(8px);
+  .module-card{
+    background:var(--white);border-radius:var(--radius-lg);
+    border:1px solid var(--gray-200);padding:20px;
+    box-shadow:var(--shadow);cursor:pointer;
+    transition:transform .18s cubic-bezier(.2,.8,.4,1),box-shadow .18s,border-color .18s;
+    text-decoration:none;display:block;position:relative;overflow:hidden;
   }
-  .portfolio-footer a{color:var(--blue);font-weight:600;text-decoration:none}
-  .portfolio-footer a:hover{text-decoration:underline}
-
-  /* CARD HOVER */
-  .card{transition:box-shadow .15s}
-  .kanban-card{transition:all .18s cubic-bezier(.2,.8,.4,1)}
-
-  /* AUTOMATION CARD POLISH */
-  .auto-card{transition:box-shadow .15s}
-  .auto-card:hover{box-shadow:var(--shadow-md)}
-  .auto-card.active-auto{border-left:3px solid var(--green)}
-  .auto-card.paused-auto{border-left:3px solid var(--gray-200)}
-
-  /* ONBOARDING STEP CONNECTOR LINE */
-  .onboard-steps-wrap{position:relative}
-  .step-connector{position:absolute;left:13px;top:0;bottom:0;width:2px;background:var(--gray-100);z-index:0}
-
-  /* TABLE ROW TRANSITION */
-  tbody tr{transition:background .1s}
-
-  /* FORM SELECT IMPROVEMENT */
-  .form-select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
-  .form-textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
-
-  /* EMPTY KANBAN */
-  .kanban-empty{
-    padding:20px 8px;text-align:center;color:var(--gray-300);font-size:11px;
-    border:1px dashed var(--gray-200);border-radius:6px;margin:4px;
+  .module-card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:3px;
+    transition:height .2s;
   }
+  .module-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 8px 28px rgba(0,0,0,.12);
+    border-color:var(--gray-300);
+  }
+  .module-card:hover::before{height:4px}
+  .module-card.mod-blue::before{background:var(--blue)}
+  .module-card.mod-teal::before{background:var(--teal)}
+  .module-card.mod-gold::before{background:var(--gold)}
+  .module-card.mod-green::before{background:var(--green)}
+  .module-card.mod-purple::before{background:var(--purple)}
+  .module-card:hover.mod-blue{border-color:rgba(37,99,235,.3)}
+  .module-card:hover.mod-teal{border-color:rgba(13,148,136,.3)}
+  .module-card:hover.mod-gold{border-color:rgba(245,158,11,.3)}
+  .module-card:hover.mod-green{border-color:rgba(16,185,129,.3)}
+  .module-card:hover.mod-purple{border-color:rgba(124,58,237,.3)}
+
+  .module-icon-wrap{
+    width:44px;height:44px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;margin-bottom:14px;
+  }
+  .mod-blue .module-icon-wrap{background:var(--blue-pale)}
+  .mod-teal .module-icon-wrap{background:var(--teal-pale)}
+  .mod-gold .module-icon-wrap{background:var(--gold-pale)}
+  .mod-green .module-icon-wrap{background:var(--green-pale)}
+  .mod-purple .module-icon-wrap{background:var(--purple-pale)}
+
+  .module-card-title{font-size:14px;font-weight:700;color:var(--gray-800);margin-bottom:6px;letter-spacing:-.2px}
+  .module-card-desc{font-size:12.5px;color:var(--gray-500);line-height:1.55}
+  .module-card-arrow{
+    position:absolute;bottom:18px;right:18px;
+    font-size:16px;color:var(--gray-300);
+    transition:transform .18s,color .18s;
+  }
+  .module-card:hover .module-card-arrow{transform:translate(2px,-2px);color:var(--gray-500)}
+  .module-card-status{
+    display:inline-flex;align-items:center;gap:4px;
+    font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;
+    margin-top:10px;
+  }
+  .status-live{background:var(--green-pale);color:var(--green)}
+  .status-soon{background:var(--gray-100);color:var(--gray-400)}
 
   /* PIPELINE TOTAL ROW */
-  .pipeline-total{
-    background:var(--navy);color:white;border-radius:8px;
-    padding:10px 14px;display:flex;align-items:center;justify-content:space-between;
-    margin-top:12px;font-size:13px;font-weight:600;
-  }
-
-  /* SECTION DIVIDER LABEL */
-  .section-divider{
-    display:flex;align-items:center;gap:10px;margin:20px 0 16px;
-  }
+  .pipeline-total{background:var(--navy);color:white;border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-top:12px;font-size:13px;font-weight:600;}
+  .kanban-empty{padding:20px 8px;text-align:center;color:var(--gray-300);font-size:11px;border:1px dashed var(--gray-200);border-radius:6px;margin:4px;}
+  .section-divider{display:flex;align-items:center;gap:10px;margin:20px 0 16px;}
   .section-divider span{font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:1px;white-space:nowrap}
   .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:var(--gray-200)}
+
+  /* FOOTER CREDIT */
+  .portfolio-footer{position:fixed;bottom:0;right:0;padding:6px 14px;background:rgba(255,255,255,.95);border-top:1px solid var(--gray-200);border-left:1px solid var(--gray-200);border-radius:10px 0 0 0;font-size:11px;color:var(--gray-400);backdrop-filter:blur(8px);}
+  .portfolio-footer a{color:var(--blue);font-weight:600;text-decoration:none}
+  .portfolio-footer a:hover{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -505,7 +446,7 @@ const INITIAL_AUTOMATIONS = [
   {id:5,on:true,name:'Approval Checklist',trigger:'Stage moved to Approval',condition:'Approval notes not empty',action:'Create task per required item',runs:8,lastRun:'Apr 5'},
 ];
 
-// ── HELPERS ─────────────────────────────────────────────────────────────────
+// ── HELPERS ──────────────────────────────────────────────────────────────────
 const TODAY = new Date().toISOString().split('T')[0];
 const fmt$ = v => '$' + Number(v).toLocaleString();
 const daysBadge = d => {
@@ -515,11 +456,7 @@ const daysBadge = d => {
   return <span className="kc-days late">{d}d 🔴</span>;
 };
 const stageBadge = s => {
-  const map = {
-    'New Lead':'badge-gray','Discovery':'badge-blue','Qualified':'badge-blue',
-    'Proposal':'badge-gold','Review':'badge-gold','Approval':'badge-teal',
-    'Implementation':'badge-teal','Closed Won':'badge-green'
-  };
+  const map = {'New Lead':'badge-gray','Discovery':'badge-blue','Qualified':'badge-blue','Proposal':'badge-gold','Review':'badge-gold','Approval':'badge-teal','Implementation':'badge-teal','Closed Won':'badge-green'};
   return <span className={`badge ${map[s]||'badge-gray'}`}><span className="badge-dot"/>{s}</span>;
 };
 const priorityBadge = p => {
@@ -527,31 +464,86 @@ const priorityBadge = p => {
   return <span className={`badge ${map[p]||'badge-gray'}`}>{p}</span>;
 };
 
-// ── COMPONENTS ───────────────────────────────────────────────────────────────
+// ── MODULE CARDS (Phase 1) ────────────────────────────────────────────────────
+function ModuleCards() {
+  const modules = [
+    {
+      title:'Client & Pipeline Management',
+      desc:'Track clients, deals, and workflow stages from start to finish',
+      icon:'👥',color:'mod-blue',href:'client.html',live:true,
+    },
+    {
+      title:'Operations & Logistics',
+      desc:'Manage vendors, shipments, and operational execution',
+      icon:'🚚',color:'mod-teal',href:'operations.html',live:false,
+    },
+    {
+      title:'Performance & KPI Tracking',
+      desc:'Monitor employee performance, KPIs, and task completion',
+      icon:'📊',color:'mod-gold',href:'performance.html',live:false,
+    },
+    {
+      title:'Financial & Profit Analysis',
+      desc:'Analyze revenue, costs, and overall profitability',
+      icon:'💰',color:'mod-green',href:'financial.html',live:false,
+    },
+    {
+      title:'Advanced Decision Engine',
+      desc:'Compare scenarios, optimize costs, and support business decisions',
+      icon:'⚡',color:'mod-purple',href:'decision.html',live:false,
+    },
+  ];
 
+  return (
+    <div className="modules-section fade-up-1">
+      <div className="modules-section-header">
+        <div>
+          <div className="modules-section-title">Platform Modules</div>
+          <div className="modules-section-sub">Select a module to get started</div>
+        </div>
+        <span className="badge badge-blue">5 Modules</span>
+      </div>
+      <div className="modules-grid">
+        {modules.map((m,i) => (
+          <a key={i} className={`module-card ${m.color}`} href={m.href}>
+            <div className="module-icon-wrap">{m.icon}</div>
+            <div className="module-card-title">{m.title}</div>
+            <div className="module-card-desc">{m.desc}</div>
+            <div>
+              <span className={`module-card-status ${m.live ? 'status-live' : 'status-soon'}`}>
+                {m.live ? '● Live' : '○ Coming Soon'}
+              </span>
+            </div>
+            <span className="module-card-arrow">↗</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────────
 function Dashboard({contacts, tasks, onView}) {
   const active = contacts.filter(c=>c.stage!=='Closed Won');
   const closedWon = contacts.filter(c=>c.stage==='Closed Won');
   const pipeline$ = active.reduce((s,c)=>s+c.loanAmount,0);
   const overdue = tasks.filter(t=>!t.done && t.due <= TODAY).length;
   const stale = contacts.filter(c=>c.daysInStage>=10).length;
-
   const byStageCounts = STAGES.map(st=>({stage:st,count:contacts.filter(c=>c.stage===st).length}));
-
-  const conversionRate = contacts.length > 0 ? Math.round((closedWon.length / contacts.length) * 100) : 0;
 
   return (
     <div>
+      {/* Suite Header Banner */}
       <div className="welcome-banner">
         <div className="welcome-left">
-          <h2>Good morning, Marcus 👋</h2>
-          <p>Your pipeline is active with <strong style={{color:'white'}}>{active.length} open accounts</strong> totaling <strong style={{color:'white'}}>{fmt$(pipeline$)}</strong>. {stale > 0 ? <span style={{color:'#FCA5A5'}}>⚠️ {stale} opportunity{stale>1?'ies':'y'} stale and need attention.</span> : <span style={{color:'#6EE7B7'}}>✓ No stale opportunities — pipeline healthy.</span>}</p>
+          <h2>ClientFlow Operations Suite</h2>
+          <p>Manage workflows, monitor performance, and drive operational efficiency across your organization.</p>
           <div className="welcome-badges">
-            <span className="welcome-badge">📁 ClientFlow CRM Demo</span>
+            <span className="welcome-badge">🏗️ 5 Platform Modules</span>
             <span className="welcome-badge">📊 {STAGES.length} Pipeline Stages</span>
             <span className="welcome-badge">⚡ 5 Automations</span>
             <span className="welcome-badge">🔒 Audit Log Active</span>
-            <span className="welcome-badge">🧩 Workflow & Visibility Demo</span>
+            <span className="welcome-badge">🧩 Built by Marcus Albright</span>
           </div>
         </div>
         <div className="welcome-right">
@@ -559,7 +551,15 @@ function Dashboard({contacts, tasks, onView}) {
           <div className="big-label">Total Active Pipeline</div>
         </div>
       </div>
-      <div className="stats-grid fade-up-1">
+
+      {/* Module Navigation Cards */}
+      <ModuleCards />
+
+      {/* Section divider */}
+      <div className="section-divider"><span>CRM Overview</span></div>
+
+      {/* Stats */}
+      <div className="stats-grid fade-up-2">
         <div className="stat-card blue">
           <div className="stat-icon">💰</div>
           <div className="stat-label">Active Pipeline</div>
@@ -634,9 +634,7 @@ function Dashboard({contacts, tasks, onView}) {
           <div className="table-wrap">
             <table>
               <thead>
-                <tr>
-                  <th>Client</th><th>Deal Value</th><th>Service Line</th><th>Stage</th><th>Days in Stage</th>
-                </tr>
+                <tr><th>Client</th><th>Deal Value</th><th>Service Line</th><th>Stage</th><th>Days in Stage</th></tr>
               </thead>
               <tbody>
                 {contacts.filter(c=>c.stage!=='Closed Won').slice(0,6).map(c=>(
@@ -661,9 +659,7 @@ function Pipeline({contacts, onView}) {
   return (
     <div>
       <div className="mb-16">
-        <p style={{fontSize:13,color:'var(--gray-400)'}}>
-          🟢 On track (0–4 days) &nbsp;⚠️ Needs attention (5–9 days) &nbsp;🔴 At risk (10+ days)
-        </p>
+        <p style={{fontSize:13,color:'var(--gray-400)'}}>🟢 On track (0–4 days) &nbsp;⚠️ Needs attention (5–9 days) &nbsp;🔴 At risk (10+ days)</p>
       </div>
       <div className="kanban">
         {STAGES.map(stage=>{
@@ -677,9 +673,7 @@ function Pipeline({contacts, onView}) {
               <div className="kanban-cards">
                 {cards.length===0 && <div className="kanban-empty">No accounts<br/>in this stage</div>}
                 {cards.map(c=>(
-                  <div key={c.id}
-                    className={`kanban-card ${c.daysInStage>=10?'stale':c.daysInStage>=5?'warning':''}`}
-                    onClick={()=>onView('detail',c)}>
+                  <div key={c.id} className={`kanban-card ${c.daysInStage>=10?'stale':c.daysInStage>=5?'warning':''}`} onClick={()=>onView('detail',c)}>
                     <div className="kc-name">{c.name}</div>
                     <div className="kc-amount">{fmt$(c.loanAmount)}</div>
                     <div className="kc-type">{c.loanType}</div>
@@ -720,10 +714,7 @@ function Contacts({contacts, onView, onAdd}) {
             <tbody>
               {filtered.map(c=>(
                 <tr key={c.id} onClick={()=>onView('detail',c)} style={{cursor:'pointer'}}>
-                  <td>
-                    <div className="td-name">{c.name}</div>
-                    <div style={{fontSize:11,color:'var(--gray-400)'}}>{c.email}</div>
-                  </td>
+                  <td><div className="td-name">{c.name}</div><div style={{fontSize:11,color:'var(--gray-400)'}}>{c.email}</div></td>
                   <td className="td-amount">{fmt$(c.loanAmount)}</td>
                   <td><span className="tag">{c.loanType}</span></td>
                   <td>{stageBadge(c.stage)}</td>
@@ -751,24 +742,20 @@ function ContactDetail({contact, onBack, contacts, setContacts, tasks}) {
   ];
   const completedSteps = onboardSteps.filter(s=>s.status==='complete').length;
   const pct = Math.round((completedSteps/onboardSteps.length)*100);
-
   const activities = [
-    {type:'STAGE_CHANGE', text:`Stage updated: Qualified → Proposal`,user:'Marcus Albright',time:'Mar 15, 2026 · 10:42 AM',icon:'🔄'},
-    {type:'DOCUMENT',     text:`Documentation received — ${fmt$(contact.loanAmount)} ${contact.loanType} opportunity updated`,user:'System',time:'Mar 15, 2026 · 10:38 AM',icon:'📄'},
-    {type:'VERIFICATION', text:'Qualification completed — requirements reviewed and account health updated',user:'Marcus Albright',time:'Mar 12, 2026 · 2:15 PM',icon:'✅'},
-    {type:'CALL',         text:'Consultation call logged — 35 minutes — needs assessment documented',user:'Marcus Albright',time:'Mar 10, 2026 · 11:00 AM',icon:'📞'},
-    {type:'CREATED',      text:'Contact record created — source: '+contact.source,user:'System',time:contact.addedDate+' · 9:00 AM',icon:'➕'},
+    {type:'STAGE_CHANGE',text:`Stage updated: Qualified → Proposal`,user:'Marcus Albright',time:'Mar 15, 2026 · 10:42 AM',icon:'🔄'},
+    {type:'DOCUMENT',text:`Documentation received — ${fmt$(contact.loanAmount)} ${contact.loanType} opportunity updated`,user:'System',time:'Mar 15, 2026 · 10:38 AM',icon:'📄'},
+    {type:'VERIFICATION',text:'Qualification completed — requirements reviewed and account health updated',user:'Marcus Albright',time:'Mar 12, 2026 · 2:15 PM',icon:'✅'},
+    {type:'CALL',text:'Consultation call logged — 35 minutes — needs assessment documented',user:'Marcus Albright',time:'Mar 10, 2026 · 11:00 AM',icon:'📞'},
+    {type:'CREATED',text:'Contact record created — source: '+contact.source,user:'System',time:contact.addedDate+' · 9:00 AM',icon:'➕'},
   ];
-
   return (
     <div>
       <button className="btn btn-ghost btn-sm mb-16" onClick={onBack}>← Back</button>
       <div className="card" style={{overflow:'hidden'}}>
         <div className="detail-header">
           <div className="flex items-center gap-12">
-            <div style={{width:48,height:48,borderRadius:'50%',background:'rgba(255,255,255,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,fontWeight:700,color:'white'}}>
-              {contact.name[0]}
-            </div>
+            <div style={{width:48,height:48,borderRadius:'50%',background:'rgba(255,255,255,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,fontWeight:700,color:'white'}}>{contact.name[0]}</div>
             <div>
               <div className="detail-name">{contact.name}</div>
               <div className="detail-meta">{contact.email} · {contact.phone}</div>
@@ -789,9 +776,7 @@ function ContactDetail({contact, onBack, contacts, setContacts, tasks}) {
             <div>
               <div className="section-title mb-16">Onboarding Progress</div>
               <div className="flex items-center gap-8 mb-16">
-                <div className="progress-bar" style={{flex:1}}>
-                  <div className="progress-fill" style={{width:`${pct}%`,background:`hsl(${pct*1.2},70%,45%)`}}/>
-                </div>
+                <div className="progress-bar" style={{flex:1}}><div className="progress-fill" style={{width:`${pct}%`,background:`hsl(${pct*1.2},70%,45%)`}}/></div>
                 <span style={{fontSize:13,fontWeight:700,color:'var(--gray-600)'}}>{pct}%</span>
               </div>
               {onboardSteps.map((st,i)=>(
@@ -812,9 +797,7 @@ function ContactDetail({contact, onBack, contacts, setContacts, tasks}) {
                     <div className={`task-check ${t.done?'done':''}`}>{t.done?'✓':''}</div>
                     <div>
                       <div className={`task-name ${t.done?'done':''}`}>{t.title}</div>
-                      <div className={`task-meta ${t.due<'2026-04-11'&&!t.done?'overdue':''}`}>
-                        {t.category} · Due {t.due}
-                      </div>
+                      <div className={`task-meta ${t.due<'2026-04-11'&&!t.done?'overdue':''}`}>{t.category} · Due {t.due}</div>
                     </div>
                     {priorityBadge(t.priority)}
                   </div>
@@ -834,9 +817,7 @@ function ContactDetail({contact, onBack, contacts, setContacts, tasks}) {
               ))}
               <div className="divider"/>
               <div className="section-title mb-16">Notes</div>
-              <div style={{background:'var(--gray-50)',borderRadius:8,padding:'12px 14px',fontSize:13,color:'var(--gray-600)'}}>
-                {contact.notes||'No notes yet.'}
-              </div>
+              <div style={{background:'var(--gray-50)',borderRadius:8,padding:'12px 14px',fontSize:13,color:'var(--gray-600)'}}>{contact.notes||'No notes yet.'}</div>
             </div>
           </div>
         </div>
@@ -861,9 +842,7 @@ function Tasks({tasks, setTasks, contacts}) {
         {['All','Active','Overdue','Done'].map(f=>(
           <button key={f} className={`btn ${filter===f?'btn-primary':'btn-ghost'} btn-sm`} onClick={()=>setFilter(f)}>{f}</button>
         ))}
-        <span style={{marginLeft:'auto',fontSize:12,color:'var(--gray-400)'}}>
-          {tasks.filter(t=>!t.done).length} open · {tasks.filter(t=>t.done).length} completed
-        </span>
+        <span style={{marginLeft:'auto',fontSize:12,color:'var(--gray-400)'}}>{tasks.filter(t=>!t.done).length} open · {tasks.filter(t=>t.done).length} completed</span>
       </div>
       <div className="card">
         <div className="card-body">
@@ -873,9 +852,7 @@ function Tasks({tasks, setTasks, contacts}) {
               <div className={`task-check ${t.done?'done':''}`} onClick={()=>toggle(t.id)}>{t.done?'✓':''}</div>
               <div style={{flex:1}}>
                 <div className={`task-name ${t.done?'done':''}`}>{t.title}</div>
-                <div className={`task-meta ${t.due<'2026-04-11'&&!t.done?'overdue':''}`}>
-                  {t.category} · {getContactName(t.contactId)} · Due {t.due}
-                </div>
+                <div className={`task-meta ${t.due<'2026-04-11'&&!t.done?'overdue':''}`}>{t.category} · {getContactName(t.contactId)} · Due {t.due}</div>
               </div>
               {priorityBadge(t.priority)}
             </div>
@@ -892,9 +869,7 @@ function Automations({automations, setAutomations}) {
     <div>
       <div className="card" style={{padding:'16px 20px',marginBottom:20,background:'var(--blue-pale)',borderColor:'var(--blue-light)'}}>
         <div style={{fontSize:13,color:'var(--blue)',fontWeight:500}}>
-          <strong>⚡ Automation Engine</strong> — {automations.filter(a=>a.on).length} of {automations.length} automations active.
-          Every automation event is logged to the Audit Log with timestamp, actor, and risk classification.
-          Automations run silently but are fully traceable and can be toggled or paused at any time.
+          <strong>⚡ Automation Engine</strong> — {automations.filter(a=>a.on).length} of {automations.length} automations active. Every automation event is logged to the Audit Log with timestamp, actor, and risk classification.
         </div>
       </div>
       {automations.map(a=>(
@@ -910,20 +885,11 @@ function Automations({automations, setAutomations}) {
             </div>
           </div>
           <div className="auto-flow">
-            <div className="auto-box trigger-box">
-              <div className="auto-box-label trigger">⚡ Trigger</div>
-              <div className="auto-box-text">{a.trigger}</div>
-            </div>
+            <div className="auto-box trigger-box"><div className="auto-box-label trigger">⚡ Trigger</div><div className="auto-box-text">{a.trigger}</div></div>
             <div className="auto-arrow">→</div>
-            <div className="auto-box condition-box">
-              <div className="auto-box-label condition">◆ Condition</div>
-              <div className="auto-box-text">{a.condition}</div>
-            </div>
+            <div className="auto-box condition-box"><div className="auto-box-label condition">◆ Condition</div><div className="auto-box-text">{a.condition}</div></div>
             <div className="auto-arrow">→</div>
-            <div className="auto-box action-box">
-              <div className="auto-box-label action">✓ Action</div>
-              <div className="auto-box-text">{a.action}</div>
-            </div>
+            <div className="auto-box action-box"><div className="auto-box-label action">✓ Action</div><div className="auto-box-text">{a.action}</div></div>
           </div>
         </div>
       ))}
@@ -933,73 +899,14 @@ function Automations({automations, setAutomations}) {
 
 function Templates() {
   const templates = [
-    {title:'Initial Lead Response',tag:'Lead',body:`Hi {FirstName},
-
-Thank you for reaching out! I would love to learn more about your goals and see where our team can help.
-
-Can we schedule a quick 15-minute discovery call this week? I will gather a few details and outline the next best steps.
-
-Best regards,
-Marcus Albright`},
-    {title:'Qualification Follow-Up',tag:'Qualified',body:`Hi {FirstName},
-
-Thanks again for the conversation. Based on what we discussed, you look like a strong fit for a {ServiceLine} engagement with an estimated value of {DealValue}.
-
-To move forward, I still need:
-• Primary business requirements
-• Current process notes
-• Key stakeholder contacts
-• Target timeline
-
-Please send those over when you can, and I will keep everything moving.
-
-Marcus`},
-    {title:'Documentation Checklist',tag:'Proposal',body:`Hi {FirstName},
-
-Your opportunity is now in proposal stage. Here is what we still need to keep momentum:
-
-☐ Final scope confirmation
-☐ Stakeholder approval
-☐ Timeline alignment
-☐ Any required supporting documents
-
-Please upload or send these within 48 hours so we can stay on track for {TargetDate}.
-
-Thank you,
-Marcus`},
-    {title:'Approval Update',tag:'Approval',body:`Hi {FirstName},
-
-Good news — your opportunity is currently in approval review for {DealValue}.
-
-We just need to finalize a few items before moving into implementation. I will send over the remaining checklist shortly.
-
-Target implementation date: {TargetDate}
-
-Marcus`},
-    {title:'Implementation Ready',tag:'Implementation',body:`Hi {FirstName},
-
-Your project is ready for implementation.
-
-Kickoff is currently scheduled for {TargetDate}. Please be ready with:
-• Final stakeholder list
-• Access or system details
-• Any open implementation questions
-
-Looking forward to getting started.
-
-Marcus Albright`},
-    {title:'Closed Won Thank You',tag:'Closed Won',body:`Hi {FirstName},
-
-Thank you for partnering with us. It was a pleasure working with you.
-
-If you know anyone who could benefit from a similar engagement, I would appreciate the referral.
-
-Wishing you continued success,
-Marcus`}
+    {title:'Initial Lead Response',tag:'Lead',body:`Hi {FirstName},\n\nThank you for reaching out! I would love to learn more about your goals and see where our team can help.\n\nCan we schedule a quick 15-minute discovery call this week?\n\nBest regards,\nMarcus Albright`},
+    {title:'Qualification Follow-Up',tag:'Qualified',body:`Hi {FirstName},\n\nThanks again for the conversation. Based on what we discussed, you look like a strong fit for a {ServiceLine} engagement.\n\nTo move forward, I still need:\n• Primary business requirements\n• Current process notes\n• Key stakeholder contacts\n• Target timeline\n\nMarcus`},
+    {title:'Documentation Checklist',tag:'Proposal',body:`Hi {FirstName},\n\nYour opportunity is now in proposal stage. Here is what we still need:\n\n☐ Final scope confirmation\n☐ Stakeholder approval\n☐ Timeline alignment\n☐ Supporting documents\n\nThank you,\nMarcus`},
+    {title:'Approval Update',tag:'Approval',body:`Hi {FirstName},\n\nGood news — your opportunity is currently in approval review for {DealValue}.\n\nWe just need to finalize a few items before moving into implementation.\n\nMarcus`},
+    {title:'Implementation Ready',tag:'Implementation',body:`Hi {FirstName},\n\nYour project is ready for implementation. Kickoff is scheduled for {TargetDate}.\n\nLooking forward to getting started.\n\nMarcus Albright`},
+    {title:'Closed Won Thank You',tag:'Closed Won',body:`Hi {FirstName},\n\nThank you for partnering with us. It was a pleasure working with you.\n\nIf you know anyone who could benefit, I would appreciate the referral.\n\nMarcus`},
   ];
-
   const tagColors = {Lead:'badge-blue',Qualified:'badge-teal',Proposal:'badge-gold',Approval:'badge-teal',Implementation:'badge-green','Closed Won':'badge-green'};
-
   return (
     <div className="grid-2">
       {templates.map((t,i)=>(
@@ -1022,25 +929,18 @@ Marcus`}
 function Reports({contacts}) {
   const byStage = STAGES.map(s=>({stage:s,count:contacts.filter(c=>c.stage===s).length,val:contacts.filter(c=>c.stage===s).reduce((a,c)=>a+c.loanAmount,0)}));
   const bySource = LEAD_SOURCES.map(s=>({source:s,count:contacts.filter(c=>c.source===s).length})).filter(s=>s.count>0);
-  const byType = LOAN_TYPES.map(t=>({type:t,count:contacts.filter(c=>c.loanType===t).length})).filter(t=>t.count>0);
   const maxCount = Math.max(...bySource.map(s=>s.count));
   return (
     <div>
       <div className="grid-3">
-        {[['Total Pipeline',fmt$(contacts.filter(c=>c.stage!=='Closed Won').reduce((a,c)=>a+c.loanAmount,0))],
-          ['Avg Deal Size',fmt$(Math.round(contacts.reduce((a,c)=>a+c.loanAmount,0)/contacts.length))],
-          ['Total Contacts',contacts.length]
-        ].map(([l,v])=>(
+        {[['Total Pipeline',fmt$(contacts.filter(c=>c.stage!=='Closed Won').reduce((a,c)=>a+c.loanAmount,0))],['Avg Deal Size',fmt$(Math.round(contacts.reduce((a,c)=>a+c.loanAmount,0)/contacts.length))],['Total Contacts',contacts.length]].map(([l,v])=>(
           <div key={l} className="card" style={{padding:'20px'}}>
             <div style={{fontSize:11,fontWeight:600,color:'var(--gray-400)',textTransform:'uppercase',letterSpacing:.8,marginBottom:8}}>{l}</div>
             <div style={{fontSize:24,fontWeight:700,color:'var(--gray-800)',letterSpacing:-1}}>{v}</div>
           </div>
         ))}
       </div>
-      <div className="pipeline-total mt-16 mb-16">
-        <span>📊 Total Portfolio Value (All Loans)</span>
-        <span>{fmt$(contacts.reduce((a,c)=>a+c.loanAmount,0))}</span>
-      </div>
+      <div className="pipeline-total mt-16 mb-16"><span>📊 Total Portfolio Value (All Accounts)</span><span>{fmt$(contacts.reduce((a,c)=>a+c.loanAmount,0))}</span></div>
       <div className="grid-2 mt-16">
         <div className="card">
           <div className="card-header"><span className="card-title">Pipeline Funnel</span></div>
@@ -1085,39 +985,38 @@ function AuditLog({contacts, tasks}) {
   const [filterType, setFilterType] = useState('All');
   const LOG_TYPES = ['All','STAGE_CHANGE','DOCUMENT','AUTOMATION','TASK','SYSTEM','ACCESS'];
   const logs = [
-    {id:1,  type:'ACCESS',      user:'Marcus Albright', action:'User session started — CRM accessed',                                  target:'System',                 time:'Apr 10, 2026 · 9:02 AM',  risk:'Low'},
-    {id:2,  type:'STAGE_CHANGE',user:'Marcus Albright', action:'Stage updated: Proposal → Review',                           target:'Robert & Lisa Hampton',  time:'Apr 9, 2026 · 4:45 PM',   risk:'Low'},
-    {id:3,  type:'AUTOMATION',  user:'System',          action:'Auto-trigger: Stale Deal Alert fired — 10+ days in Review',     target:'Robert & Lisa Hampton',  time:'Apr 9, 2026 · 4:45 PM',   risk:'Medium'},
-    {id:4,  type:'TASK',        user:'System',          action:'Task created: Follow up on stalled review — Priority: High',            target:'Robert & Lisa Hampton',  time:'Apr 9, 2026 · 4:45 PM',   risk:'Low'},
-    {id:5,  type:'DOCUMENT',    user:'Marcus Albright', action:'Note added: pricing confirmation pending',                             target:'Marcus & Diane Webb',    time:'Apr 9, 2026 · 2:10 PM',   risk:'Low'},
-    {id:6,  type:'STAGE_CHANGE',user:'Marcus Albright', action:'Stage updated: Approval → Implementation',                     target:'Sarah Chen',             time:'Apr 8, 2026 · 11:30 AM',  risk:'Low'},
-    {id:7,  type:'AUTOMATION',  user:'System',          action:'Auto-trigger: New Lead Welcome — task created for Kevin Patel',      target:'Kevin Patel',            time:'Apr 8, 2026 · 9:00 AM',   risk:'Low'},
-    {id:8,  type:'SYSTEM',      user:'System',          action:'Contact record created — source: Referral',                          target:'Kevin Patel',            time:'Apr 8, 2026 · 9:00 AM',   risk:'Low'},
-    {id:9,  type:'TASK',        user:'Marcus Albright', action:'Task completed: Request referral and success quote — Brian Steele',          target:'Brian Steele',           time:'Apr 7, 2026 · 3:22 PM',   risk:'Low'},
-    {id:10, type:'STAGE_CHANGE',user:'Marcus Albright', action:'Stage updated: Implementation → Closed Won',                            target:'Brian Steele',           time:'Apr 1, 2026 · 10:00 AM',  risk:'Low'},
-    {id:11, type:'AUTOMATION',  user:'System',          action:'Auto-trigger: post-close referral sequence initiated',              target:'Brian Steele',           time:'Apr 1, 2026 · 10:00 AM',  risk:'Low'},
-    {id:12, type:'DOCUMENT',    user:'Marcus Albright', action:'Email sent: Implementation readiness update',                           target:'Brian Steele',           time:'Mar 31, 2026 · 2:00 PM',  risk:'Low'},
-    {id:13, type:'ACCESS',      user:'Marcus Albright', action:'Client record accessed — detail view opened',                     target:'Patricia Okonkwo',       time:'Mar 30, 2026 · 4:10 PM',  risk:'Low'},
-    {id:14, type:'AUTOMATION',  user:'System',          action:'Auto-trigger: Approval Checklist — 3 tasks generated',       target:'Anthony Bell',           time:'Mar 28, 2026 · 1:30 PM',  risk:'Low'},
-    {id:15, type:'SYSTEM',      user:'System',          action:'Pipeline integrity check — no data anomalies detected',            target:'All Records',            time:'Mar 25, 2026 · 12:00 AM', risk:'Low'},
-    {id:16, type:'STAGE_CHANGE',user:'Marcus Albright', action:'Stage updated: Review → Approval',                    target:'Patricia Okonkwo',       time:'Mar 22, 2026 · 9:45 AM',  risk:'Low'},
-    {id:17, type:'DOCUMENT',    user:'Marcus Albright', action:'Document request sent: pricing confirmation note',              target:'Marcus & Diane Webb',    time:'Mar 20, 2026 · 3:00 PM',  risk:'Low'},
-    {id:18, type:'AUTOMATION',  user:'System',          action:'Auto-trigger: Proposal Submitted — checklist task created',    target:'Chris & Megan Foster',   time:'Mar 15, 2026 · 10:38 AM', risk:'Low'},
-    {id:19, type:'SYSTEM',      user:'System',          action:'Contact record created — source: Website',                          target:'James Rivera',           time:'Mar 15, 2026 · 8:00 AM',  risk:'Low'},
-    {id:20, type:'ACCESS',      user:'Marcus Albright', action:'User session ended — 4h 22m active',                               target:'System',                 time:'Mar 14, 2026 · 5:30 PM',  risk:'Low'},
+    {id:1,type:'ACCESS',user:'Marcus Albright',action:'User session started — CRM accessed',target:'System',time:'Apr 10, 2026 · 9:02 AM',risk:'Low'},
+    {id:2,type:'STAGE_CHANGE',user:'Marcus Albright',action:'Stage updated: Proposal → Review',target:'Robert & Lisa Hampton',time:'Apr 9, 2026 · 4:45 PM',risk:'Low'},
+    {id:3,type:'AUTOMATION',user:'System',action:'Auto-trigger: Stale Deal Alert fired — 10+ days in Review',target:'Robert & Lisa Hampton',time:'Apr 9, 2026 · 4:45 PM',risk:'Medium'},
+    {id:4,type:'TASK',user:'System',action:'Task created: Follow up on stalled review — Priority: High',target:'Robert & Lisa Hampton',time:'Apr 9, 2026 · 4:45 PM',risk:'Low'},
+    {id:5,type:'DOCUMENT',user:'Marcus Albright',action:'Note added: pricing confirmation pending',target:'Marcus & Diane Webb',time:'Apr 9, 2026 · 2:10 PM',risk:'Low'},
+    {id:6,type:'STAGE_CHANGE',user:'Marcus Albright',action:'Stage updated: Approval → Implementation',target:'Sarah Chen',time:'Apr 8, 2026 · 11:30 AM',risk:'Low'},
+    {id:7,type:'AUTOMATION',user:'System',action:'Auto-trigger: New Lead Welcome — task created for Kevin Patel',target:'Kevin Patel',time:'Apr 8, 2026 · 9:00 AM',risk:'Low'},
+    {id:8,type:'SYSTEM',user:'System',action:'Contact record created — source: Referral',target:'Kevin Patel',time:'Apr 8, 2026 · 9:00 AM',risk:'Low'},
+    {id:9,type:'TASK',user:'Marcus Albright',action:'Task completed: Request referral and success quote — Brian Steele',target:'Brian Steele',time:'Apr 7, 2026 · 3:22 PM',risk:'Low'},
+    {id:10,type:'STAGE_CHANGE',user:'Marcus Albright',action:'Stage updated: Implementation → Closed Won',target:'Brian Steele',time:'Apr 1, 2026 · 10:00 AM',risk:'Low'},
+    {id:11,type:'AUTOMATION',user:'System',action:'Auto-trigger: post-close referral sequence initiated',target:'Brian Steele',time:'Apr 1, 2026 · 10:00 AM',risk:'Low'},
+    {id:12,type:'DOCUMENT',user:'Marcus Albright',action:'Email sent: Implementation readiness update',target:'Brian Steele',time:'Mar 31, 2026 · 2:00 PM',risk:'Low'},
+    {id:13,type:'ACCESS',user:'Marcus Albright',action:'Client record accessed — detail view opened',target:'Patricia Okonkwo',time:'Mar 30, 2026 · 4:10 PM',risk:'Low'},
+    {id:14,type:'AUTOMATION',user:'System',action:'Auto-trigger: Approval Checklist — 3 tasks generated',target:'Anthony Bell',time:'Mar 28, 2026 · 1:30 PM',risk:'Low'},
+    {id:15,type:'SYSTEM',user:'System',action:'Pipeline integrity check — no data anomalies detected',target:'All Records',time:'Mar 25, 2026 · 12:00 AM',risk:'Low'},
+    {id:16,type:'STAGE_CHANGE',user:'Marcus Albright',action:'Stage updated: Review → Approval',target:'Patricia Okonkwo',time:'Mar 22, 2026 · 9:45 AM',risk:'Low'},
+    {id:17,type:'DOCUMENT',user:'Marcus Albright',action:'Document request sent: pricing confirmation note',target:'Marcus & Diane Webb',time:'Mar 20, 2026 · 3:00 PM',risk:'Low'},
+    {id:18,type:'AUTOMATION',user:'System',action:'Auto-trigger: Proposal Submitted — checklist task created',target:'Chris & Megan Foster',time:'Mar 15, 2026 · 10:38 AM',risk:'Low'},
+    {id:19,type:'SYSTEM',user:'System',action:'Contact record created — source: Website',target:'James Rivera',time:'Mar 15, 2026 · 8:00 AM',risk:'Low'},
+    {id:20,type:'ACCESS',user:'Marcus Albright',action:'User session ended — 4h 22m active',target:'System',time:'Mar 14, 2026 · 5:30 PM',risk:'Low'},
   ];
   const riskColor = {Low:'badge-green',Medium:'badge-gold',High:'badge-red'};
   const typeColor = {STAGE_CHANGE:'badge-blue',DOCUMENT:'badge-teal',AUTOMATION:'badge-gold',TASK:'badge-gray',SYSTEM:'badge-gray',ACCESS:'badge-blue'};
   const typeIcon = {STAGE_CHANGE:'🔄',DOCUMENT:'📄',AUTOMATION:'⚡',TASK:'✅',SYSTEM:'⚙️',ACCESS:'🔑'};
   const filtered = logs.filter(l=>filterType==='All'||l.type===filterType);
-
   return (
     <div>
       <div style={{background:'var(--navy)',borderRadius:'var(--radius-lg)',padding:'16px 20px',marginBottom:20,display:'flex',alignItems:'center',gap:12}}>
         <span style={{fontSize:20}}>🔒</span>
         <div>
           <div style={{fontSize:14,fontWeight:700,color:'white'}}>System Audit Log</div>
-          <div style={{fontSize:12,color:'rgba(255,255,255,.5)'}}>All system events logged with timestamp, actor, target, and risk classification. Immutable record of all CRM activity.</div>
+          <div style={{fontSize:12,color:'rgba(255,255,255,.5)'}}>All system events logged with timestamp, actor, target, and risk classification.</div>
         </div>
         <div style={{marginLeft:'auto',textAlign:'right'}}>
           <div style={{fontSize:20,fontWeight:800,color:'white',fontFamily:'var(--mono)'}}>{logs.length}</div>
@@ -1125,32 +1024,17 @@ function AuditLog({contacts, tasks}) {
         </div>
       </div>
       <div className="flex items-center gap-8 mb-16" style={{flexWrap:'wrap'}}>
-        {LOG_TYPES.map(t=>(
-          <button key={t} className={`btn btn-sm ${filterType===t?'btn-primary':'btn-ghost'}`} onClick={()=>setFilterType(t)}>{t}</button>
-        ))}
+        {LOG_TYPES.map(t=>(<button key={t} className={`btn btn-sm ${filterType===t?'btn-primary':'btn-ghost'}`} onClick={()=>setFilterType(t)}>{t}</button>))}
         <span style={{marginLeft:'auto',fontSize:11,color:'var(--gray-400)'}}>Showing {filtered.length} of {logs.length} events</span>
       </div>
       <div className="card">
         <div className="table-wrap">
           <table>
-            <thead>
-              <tr>
-                <th>Event Type</th>
-                <th>Action</th>
-                <th>Target</th>
-                <th>Actor</th>
-                <th>Timestamp</th>
-                <th>Risk</th>
-              </tr>
-            </thead>
+            <thead><tr><th>Event Type</th><th>Action</th><th>Target</th><th>Actor</th><th>Timestamp</th><th>Risk</th></tr></thead>
             <tbody>
               {filtered.map(l=>(
                 <tr key={l.id}>
-                  <td>
-                    <span className={`badge ${typeColor[l.type]||'badge-gray'}`}>
-                      {typeIcon[l.type]} {l.type}
-                    </span>
-                  </td>
+                  <td><span className={`badge ${typeColor[l.type]||'badge-gray'}`}>{typeIcon[l.type]} {l.type}</span></td>
                   <td style={{fontSize:12.5,color:'var(--gray-700)',maxWidth:300}}>{l.action}</td>
                   <td style={{fontSize:12,color:'var(--gray-500)',fontWeight:500}}>{l.target}</td>
                   <td style={{fontSize:12,color:'var(--gray-500)'}}>{l.user}</td>
@@ -1220,7 +1104,7 @@ function App() {
   const [showAddModal, setShowAddModal] = useState(false);
 
   const navItems = [
-    {id:'dashboard',icon:'📊',label:'Dashboard'},
+    {id:'dashboard',icon:'🏠',label:'Home'},
     {id:'pipeline',icon:'🗂',label:'Pipeline'},
     {id:'contacts',icon:'👥',label:'Contacts'},
     {id:'tasks',icon:'✅',label:'Tasks',badge:tasks.filter(t=>!t.done&&t.due<='2026-04-11').length||null},
@@ -1230,10 +1114,23 @@ function App() {
     {id:'auditlog',icon:'🔒',label:'Audit Log'},
   ];
 
-  const pageTitles = {dashboard:'Dashboard',pipeline:'Pipeline View',contacts:'All Contacts',tasks:'Task Manager',automations:'Automation Center',templates:'Workflow Templates',reports:'Reports & Analytics',detail:'Client Detail',auditlog:'System Audit Log'};
+  const pageTitles = {
+    dashboard:'ClientFlow Operations Suite',
+    pipeline:'Pipeline View',contacts:'All Contacts',tasks:'Task Manager',
+    automations:'Automation Center',templates:'Workflow Templates',
+    reports:'Reports & Analytics',detail:'Client Detail',auditlog:'System Audit Log'
+  };
+
+  const pageSubs = {
+    dashboard:'Manage workflows, monitor performance, and drive operational efficiency across your organization.',
+    pipeline:`${contacts.length} total contacts across ${STAGES.length} stages`,
+    contacts:`${contacts.length} contacts`,
+    tasks:`${tasks.filter(t=>!t.done).length} open tasks`,
+    automations:`${automations.filter(a=>a.on).length} automations active`,
+    auditlog:'Full system event log — all actions timestamped and categorized',
+  };
 
   const handleView = (v, contact=null) => {setView(v); if(contact) setSelectedContact(contact)};
-
   const addContact = c => setContacts(prev=>[c,...prev]);
 
   return (
@@ -1241,16 +1138,16 @@ function App() {
       <div className="sidebar">
         <div className="sidebar-brand">
           <div className="brand-logo">
-            <div className="brand-icon">🏠</div>
+            <div className="brand-icon">⚙️</div>
             <div>
-              <div className="brand-name">ClientFlow CRM Demo</div>
+              <div className="brand-name">ClientFlow</div>
+              <div className="brand-sub">Operations Suite</div>
             </div>
           </div>
-          <div className="brand-sub">Workflow & Pipeline Management</div>
         </div>
         <div className="sidebar-nav">
           <div className="nav-section">
-            <div className="nav-label">Main</div>
+            <div className="nav-label">Platform</div>
             {navItems.map(item=>(
               <div key={item.id} className={`nav-item ${view===item.id?'active':''}`} onClick={()=>setView(item.id)}>
                 <span className="nav-icon">{item.icon}</span>
@@ -1259,13 +1156,21 @@ function App() {
               </div>
             ))}
           </div>
+          <div className="nav-section">
+            <div className="nav-label">Modules</div>
+            <a className="nav-item" href="client.html"><span className="nav-icon">👥</span><span>Client & Pipeline</span><span style={{marginLeft:'auto',fontSize:9,fontWeight:700,color:'var(--green)',background:'var(--green-pale)',padding:'1px 5px',borderRadius:6}}>LIVE</span></a>
+            <a className="nav-item" href="operations.html"><span className="nav-icon">🚚</span><span>Operations</span></a>
+            <a className="nav-item" href="performance.html"><span className="nav-icon">📊</span><span>Performance</span></a>
+            <a className="nav-item" href="financial.html"><span className="nav-icon">💰</span><span>Financial</span></a>
+            <a className="nav-item" href="decision.html"><span className="nav-icon">⚡</span><span>Decision Engine</span></a>
+          </div>
         </div>
         <div className="sidebar-footer">
           <div className="user-card">
             <div className="user-avatar">MA</div>
             <div>
               <div className="user-name">Marcus Albright</div>
-              <div className="user-nmls">Portfolio Demo</div>
+              <div className="user-nmls">Operations Suite</div>
             </div>
           </div>
         </div>
@@ -1275,22 +1180,12 @@ function App() {
         <div className="topbar">
           <div className="topbar-left">
             <div>
-              <div className="page-title">{pageTitles[view]||'ClientFlow CRM Demo'}</div>
-              <div className="page-sub">
-                {view==='dashboard'&&`${contacts.filter(c=>c.stage!=='Closed Won').length} active accounts · ${contacts.filter(c=>c.stage==='Closed Won').length} closed`}
-                {view==='pipeline'&&`${contacts.length} total contacts across ${STAGES.length} stages`}
-                {view==='contacts'&&`${contacts.length} contacts`}
-                {view==='tasks'&&`${tasks.filter(t=>!t.done).length} open tasks`}
-                {view==='automations'&&`${automations.filter(a=>a.on).length} automations active`}
-                {view==='auditlog'&&'Full system event log — all actions timestamped and categorized'}
-              </div>
+              <div className="page-title">{pageTitles[view]||'ClientFlow Operations Suite'}</div>
+              <div className="page-sub">{pageSubs[view]||''}</div>
             </div>
           </div>
           <div className="topbar-right">
-            <div className="status-pill">
-              <div className="status-dot-pulse"/>
-              Live Demo
-            </div>
+            <div className="status-pill"><div className="status-dot-pulse"/>Live Demo</div>
             <div className="topbar-divider"/>
             {view==='contacts'&&<button className="btn btn-primary btn-sm" onClick={()=>setShowAddModal(true)}>+ Add Contact</button>}
             {view==='pipeline'&&<button className="btn btn-ghost btn-sm">🔍 Filter</button>}
@@ -1317,10 +1212,9 @@ function App() {
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 
-// Portfolio footer
 const footerDiv = document.createElement('div');
 footerDiv.className = 'portfolio-footer';
-footerDiv.innerHTML = 'Built by <a href="https://linkedin.com/in/marcus-a-69ab2989" target="_blank">Marcus Albright</a> &nbsp;·&nbsp; <a href="https://github.com/techByMarcus" target="_blank">GitHub</a> &nbsp;·&nbsp; ClientFlow CRM Demo';
+footerDiv.innerHTML = 'Built by <a href="https://linkedin.com/in/marcus-a-69ab2989" target="_blank">Marcus Albright</a> &nbsp;·&nbsp; <a href="https://github.com/techByMarcus" target="_blank">GitHub</a> &nbsp;·&nbsp; ClientFlow Operations Suite';
 document.body.appendChild(footerDiv);
 </script>
 </body>
